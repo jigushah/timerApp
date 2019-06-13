@@ -10,9 +10,7 @@ class TimerScreen extends React.Component {
   };
 
   componentDidMount() {
-    if (this.props.isTimerOn) {
       this.props.startTimer(true)
-    }
     AppState.addEventListener('change', (nextAppState) => this._handleAppStateChange(nextAppState));
   }
 
@@ -30,7 +28,7 @@ class TimerScreen extends React.Component {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={{ flex: 1 ,justifyContent:'center', alignItems:'center',padding:10}}>
         <TouchableOpacity onPress={() => {
           this.props.startTimer();
         }}>

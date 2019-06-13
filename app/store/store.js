@@ -12,7 +12,7 @@ const config = {
 
 const middleware = [
   thunkMiddleware,
-  logger
+  // logger
 ];
 
 const persistedReducer = persistCombineReducers(config, rootReducer)
