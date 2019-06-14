@@ -5,13 +5,11 @@ class CardComponent extends React.Component {
   render() {
     let { children, title } = this.props;
     return (
-      <View style={{ flex: 1 }}>
-        <ImageBackground source={require('../images/image.png')} style={{ width: '100%', height: '100%' }}>
-          <Header title={title} />
-          <ScrollView style={{ padding: 0, backgroundColor: 'rgba(255,255,255,0.7)' }}>
+      <View style={{ flex: 1, backgroundColor:'red' }}>
+        <Header title={title} />
+          <ScrollView style={{ padding: 0, backgroundColor: 'red' }}>
             {children}
           </ScrollView>
-        </ImageBackground>
       </View>
     );
   }

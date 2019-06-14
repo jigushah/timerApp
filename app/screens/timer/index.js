@@ -1,6 +1,6 @@
 import React from 'react';
-import { Alert, Text, View, Dimensions, AppState , TouchableOpacity} from 'react-native';
-import { startTimer , timerUpdate} from '../../actions/timerAction'
+import { Alert, Text, View, Dimensions, AppState, TouchableOpacity } from 'react-native';
+import { startTimer, timerUpdate } from '../../actions/timerAction'
 import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
@@ -13,7 +13,7 @@ class TimerScreen extends React.Component {
   };
 
   componentDidMount() {
-      this.props.startTimer(true)
+    this.props.startTimer(true)
     AppState.addEventListener('change', (nextAppState) => this._handleAppStateChange(nextAppState));
   }
 
@@ -23,14 +23,13 @@ class TimerScreen extends React.Component {
 
   _handleAppStateChange = (nextAppState) => {
     if (this.state.appState.match(/inactive|background/) &&
-    nextAppState === 'active') {
+      nextAppState === 'active') {
       this.props.startTimer(true)
     }
-      this.setState({appState: nextAppState});
+    this.setState({ appState: nextAppState });
   }
 
   openImagePicker = () => {
-    debugger
     const options = {
       title: 'Select IMAGE',
       storageOptions: {
@@ -39,12 +38,7 @@ class TimerScreen extends React.Component {
       },
     };
 
-    /**
-     * The first arg is the options object for customization (it can also be null or omitted for default options),
-     * The second arg is the callback which sends object: response (more info in the API Reference)
-     */
     ImagePicker.showImagePicker(options, (response) => {
-
       if (response.didCancel) {
         console.log('User cancelled image picker');
       } else if (response.error) {
@@ -53,44 +47,40 @@ class TimerScreen extends React.Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const { uri, path, type } = response;
-        const source = { uri };
-        debugger
-        const newPath = 'file://' + path;
         this.sendEmail(path, type);
       }
     });
 
   }
   sendEmail = (uri, type) => {
-          Mailer.mail({
-            subject: 'test attachments',
-            recipients: ['support@example.com'],
-            ccRecipients: ['supportCC@example.com'],
-            bccRecipients: ['supportBCC@example.com'],
-            body: '<p>Dear Sir/Madam,</p>',
-            isHTML: true,
-            attachment: {
-              path: uri,  // The absolute path of the file from which to read data.
-              type: type,   // Mime Type: jpg, png, doc, ppt, html, pdf
-              name: ' Note',   // Optional: Custom filename for attachment
-            }
-          }, (error, event) => {
-            if (error) {
-              debugger
-              console.log('Error', 'Could not send mail. Please send a mail to support@example.com');
-            }
-          });
+    Mailer.mail({
+      subject: 'test attachments',
+      recipients: ['support@example.com'],
+      ccRecipients: ['supportCC@example.com'],
+      bccRecipients: ['supportBCC@example.com'],
+      body: '<p>Dear Sir/Madam,</p>',
+      isHTML: true,
+      attachment: {
+        path: uri,  // The absolute path of the file from which to read data.
+        type: type,   // Mime Type: jpg, png, doc, ppt, html, pdf
+        name: ' Note',   // Optional: Custom filename for attachment
+      }
+    }, (error, event) => {
+      if (error) {
+        console.log('Error', 'Could not send mail. Please send a mail to support@example.com');
+      }
+    });
   };
 
   render() {
     return (
-      <View style={{ flex: 1 ,justifyContent:'center', alignItems:'center',padding:10}}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
         <TouchableOpacity onPress={() => {
           this.props.startTimer();
         }}>
-         <Text>Start</Text>
+          <Text>Start</Text>
         </TouchableOpacity>
-        <Text>{moment.utc(this.props.timeLeft*1000).format('HH:mm:ss')}</Text>
+        <Text>{moment.utc(this.props.timeLeft * 1000).format('HH:mm:ss')}</Text>
         <TouchableOpacity onPress={this.openImagePicker}>
           <Text>
             send mail
@@ -105,7 +95,7 @@ class TimerScreen extends React.Component {
 const mapStateToProps = state => {
   return {
     isTimerOn: state.root.timer.isTimerOn,
-    timeLeft : state.root.timer.timeLeft
+    timeLeft: state.root.timer.timeLeft
   }
 };
 

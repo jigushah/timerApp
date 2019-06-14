@@ -2,18 +2,24 @@ import React from 'react';
 import { Text, View } from 'react-native';
 import { createBottomTabNavigator } from 'react-navigation';
 import TimerScreen from '../timer/index'
+import LocationScreen from '../location/index'
+import SettingScreen from '../settings/index'
+
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialUIIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const TabNavigator = createBottomTabNavigator({
-  Timer: TimerScreen,
+  Active: SettingScreen,
+  Location: LocationScreen,
+  Setting: SettingScreen,
+  About: TimerScreen,
 }, {
     defaultNavigationOptions: ({ navigation }) => ({   
       tabBarIcon: ({ focused, horizontal, tintColor }) => {
         const { routeName } = navigation.state;
         let IconComponent = MaterialUIIcons;
         let iconName;
-        if (routeName === 'Timer') {
+        if (routeName === 'About' || routeName === 'Location' || routeName === 'Setting' || routeName === 'Active') {
           iconName = 'dictionary';
         }
 
@@ -22,10 +28,10 @@ const TabNavigator = createBottomTabNavigator({
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'gray',
-      inactiveTintColor: 'black',
-      inactiveBackgroundColor: 'rgb(251,216,84)',
-      activeBackgroundColor: 'rgb(251,216,84)'
+      activeTintColor: 'red',
+      inactiveTintColor: 'red',
+      inactiveBackgroundColor: 'white',
+      activeBackgroundColor: 'white'
     }
   });
 

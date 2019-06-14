@@ -7,7 +7,7 @@ class HeaderComponent extends React.Component {
     let { title } = this.props;
     return (
       <View style={{ height: 50, alignItems: 'center', justifyContent: 'center', backgroundColor:'white' }}>
-        <Text style={{ color: 'rgb(251,216,84)', fontSize: 20 }}>{title}</Text>
+        <Text style={{ color: 'red', fontSize: 20 }}>{title}</Text>
       </View>
     );
   }
