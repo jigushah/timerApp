@@ -27,8 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new ImagePickerPackage(),
             new RNMail(),
+            new ImagePickerPackage(),
             new RNGestureHandlerPackage(),
             new VectorIconsPackage()
       );

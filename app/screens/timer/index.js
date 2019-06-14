@@ -56,7 +56,7 @@ class TimerScreen extends React.Component {
         const source = { uri };
         debugger
         const newPath = 'file://' + path;
-        this.sendEmail(newPath, type);
+        this.sendEmail(path, type);
       }
     });
 
