@@ -58,7 +58,7 @@ class Location extends React.Component {
       }
     });
 
-  }
+  };
   sendEmail = (uri, type) => {
     Mailer.mail({
       subject: 'test attachments',
