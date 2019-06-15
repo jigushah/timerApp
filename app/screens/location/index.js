@@ -4,10 +4,12 @@ import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
 import { startTimer, timerUpdate } from '../../actions/timerAction'
+import { setNewEvent } from '../../actions/eventAction';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
+import PopupComponent from '../../commonComponent/popupComponent';
 
 class Location extends React.Component {
   constructor(props) {
@@ -35,6 +37,13 @@ class Location extends React.Component {
     this.setState({ appState: nextAppState });
   }
 
+  storeNewEvent = () => {
+    this.props.setNewEvent({ eventLocation: this.state.location, mid: this.props.mid, final: this.props.final,midAttachment:'',finalAttachment:'', isActive: false })
+  }
+
+  clearEventLocation = () => {
+    this.setState({ location: '' })
+  }
 
   openImagePicker = () => {
     const options = {
@@ -85,10 +94,10 @@ class Location extends React.Component {
         <View style={{ padding: 20 }}>
           <Title text="Location Details" customStyle={{ padding: 10 }} />
           <FormFieldInput onChangeTextInput={text => this.setState({ location: text })} value={location} />
-          <TouchableOpacity style={styles.startCircle} 
-          onPress={() => {
-            this.props.startTimer();
-          }}>
+          <TouchableOpacity style={styles.startCircle}
+            onPress={() => {
+              this.props.startTimer();
+            }}>
             <Title text='Start' customStyle={{ color: 'black' }} />
           </TouchableOpacity>
           <View style={styles.rowContainer}>
@@ -101,21 +110,21 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute} onPress={this.openImagePicker}>
-              <Title text='30' customStyle={{ color: 'black' }} />
+              <Title text={this.props.final} customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Final check' customStyle={{ alignSelf: 'flex-start' }} />
             </View>
           </View>
           <View style={styles.rowContainer}>
-            <TouchableOpacity style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, borderRadius: 25 }}>
+            <TouchableOpacity onPress={this.clearEventLocation} style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, borderRadius: 25 }}>
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
                 padding: 10,
                 color: 'black'
               }} />
             </TouchableOpacity>
-            <TouchableOpacity style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
+            <TouchableOpacity onPress={this.storeNewEvent} style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
               <Title text='New' customStyle={{
                 alignSelf: 'center', padding: 10,
                 color: 'black'
@@ -123,6 +132,7 @@ class Location extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
+        {/* <PopupComponent /> */}
       </ContainerComponent>
     );
   }
@@ -131,12 +141,14 @@ class Location extends React.Component {
 const mapStateToProps = state => {
   return {
     isTimerOn: state.root.timer.isTimerOn,
-    timeLeft: state.root.timer.timeLeft
+    timeLeft: state.root.timer.timeLeft,
+    mid: state.root.event.eventDetails.mid,
+    final: state.root.event.eventDetails.final
   }
 };
 
 const mapDispatchToProps = {
-  startTimer, timerUpdate
+  startTimer, timerUpdate, setNewEvent
 };
 
 

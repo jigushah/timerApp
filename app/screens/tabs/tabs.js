@@ -4,12 +4,13 @@ import { createBottomTabNavigator } from 'react-navigation';
 import TimerScreen from '../timer/index'
 import LocationScreen from '../location/index'
 import SettingScreen from '../settings/index'
+import EventScreen from '../events/index'
 
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialUIIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const TabNavigator = createBottomTabNavigator({
-  Active: SettingScreen,
+  Active: EventScreen,
   Location: LocationScreen,
   Setting: SettingScreen,
   About: TimerScreen,
