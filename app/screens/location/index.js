@@ -15,7 +15,8 @@ class Location extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      location: ''
+      location: '',
+      appState: AppState.currentState,
     }
   }
 
@@ -66,7 +67,7 @@ class Location extends React.Component {
       }
     });
 
-  }
+  };
   sendEmail = (uri, type) => {
     Mailer.mail({
       subject: 'test attachments',
