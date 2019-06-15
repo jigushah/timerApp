@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
+import PopupComponent from '../../commonComponent/popupComponent';
 
 class Location extends React.Component {
   constructor(props) {
@@ -130,6 +131,7 @@ class Location extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
+        {/* <PopupComponent /> */}
       </ContainerComponent>
     );
   }

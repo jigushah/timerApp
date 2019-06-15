@@ -62,10 +62,10 @@ export const timerStop = () => {
   return (dispatch, getState) => {
     clearInterval(Timer)
     dispatch(timerUpdate("isTimerOn", false))
-    // confirmLogout('nxt timer will be for 1 min', () => {
-    //   dispatch(startTimer(false,true));
-    // }, () => {})
-    openImagePicker()
+    confirmLogout('nxt timer will be for 1 min', () => {
+      dispatch(startTimer(false,true));
+    }, () => {})
+    // openImagePicker()
   }
 }
 export const timerUpdate = (key, value) => {
