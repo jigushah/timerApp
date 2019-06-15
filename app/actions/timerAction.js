@@ -12,11 +12,15 @@ import {
   showAlert,
   confirmLogout
 } from '../utils/commonFunction'
+import Mailer from 'react-native-mail';
+import ImagePicker from 'react-native-image-picker';
 
 let Timer = null;
 let TotalTimerTime = 0.5 * 60;
 let TotalTimerTimeNext = 1 * 60;
 let timerCount = 0
+
+
 
 export const startTimer = (resume = false,next = false) => (dispatch, getState) => {
   return new Promise((resolve, reject) => {
@@ -58,9 +62,10 @@ export const timerStop = () => {
   return (dispatch, getState) => {
     clearInterval(Timer)
     dispatch(timerUpdate("isTimerOn", false))
-    confirmLogout('nxt timer will be for 1 min', () => {
-      dispatch(startTimer(false,true));
-    }, () => {})
+    // confirmLogout('nxt timer will be for 1 min', () => {
+    //   dispatch(startTimer(false,true));
+    // }, () => {})
+    openImagePicker()
   }
 }
 export const timerUpdate = (key, value) => {
@@ -76,4 +81,28 @@ export const timerUpdateList = (list) => {
     type: TIMER_UPDATE_LIST,
     list
   }
+}
+
+export const openImagePicker = () => {
+  const options = {
+    title: 'Select IMAGE',
+    storageOptions: {
+      skipBackup: true,
+      path: 'images',
+    },
+  };
+
+  ImagePicker.showImagePicker(options, (response) => {
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } else {
+      const { uri, path, type } = response;
+      this.sendEmail(path, type);
+    }
+  });
+
 }

@@ -1,10 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
+import {setEventDetails} from '../../actions/eventAction';
+import { connect } from 'react-redux';
 
-export default class Setting extends React.Component {
+class Setting extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,6 +15,11 @@ export default class Setting extends React.Component {
       email: ''
     }
   }
+
+  saveDetails = () =>{
+    this.props.setEventDetails({"mid":this.state.mid,"final":this.state.final,"email":this.state.email})
+  }
+
 
   render() {
     let { mid, final,email } = this.state;
@@ -45,6 +52,14 @@ export default class Setting extends React.Component {
           <Title text="Email Address" customStyle={{ alignSelf: 'flex-start' }} />
           <FormFieldInput keyboardType={'email-address'} onChangeTextInput={text => this.setState({ email: text })} value={email} />
           </View>
+          <View style={styles.rowContainer}>
+            <TouchableOpacity onPress={this.saveDetails} style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
+              <Title text='Save' customStyle={{
+                alignSelf: 'center', padding: 10,
+                color: 'black'
+              }} />
+            </TouchableOpacity>
+          </View>
         </View>
       </ContainerComponent>
     );
@@ -66,3 +81,14 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center', margin: 20
   }
 });
+
+const mapStateToProps = state => {
+  return {
+  }
+};
+
+const mapDispatchToProps = {
+  setEventDetails
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Setting)
