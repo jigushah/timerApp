@@ -5,7 +5,10 @@ import moment from 'moment';
 
 const initialState = {
   eventDetails:{},
-  eventList:[]
+  eventList:[],
+  isPopupShow: false,
+  midAttachment:{},
+  isMid : true
 };
 
 export function EventReducer(state = initialState, action) {

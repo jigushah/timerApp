@@ -4,7 +4,7 @@ import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
 import { startTimer, timerUpdate } from '../../actions/timerAction'
-import { setNewEvent } from '../../actions/eventAction';
+import { setNewEvent,eventDetails } from '../../actions/eventAction';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
@@ -44,6 +44,33 @@ class Location extends React.Component {
   clearEventLocation = () => {
     this.setState({ location: '' })
   }
+ 
+  openMidCheckImage = () => {
+    const options = {
+      title: 'Select IMAGE',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const { uri, path, type } = response;
+        // this.sendEmail(path, type);
+        // this.props.startTimer(false,true);
+        this.props.eventDetails('midAttachment', {path : path, type: type})
+        this.props.eventDetails('isMid',false)
+        this.props.eventDetails('isPopupShow',false)
+      }
+    });
+  }
 
   openImagePicker = () => {
     const options = {
@@ -63,6 +90,9 @@ class Location extends React.Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const { uri, path, type } = response;
+        let {midAttachment} = this.props;
+        let pathList = [midAttachment.path , path];
+        let typeList = [midAttachment.type, type];
         this.sendEmail(path, type);
       }
     });
@@ -71,10 +101,8 @@ class Location extends React.Component {
   sendEmail = (uri, type) => {
     Mailer.mail({
       subject: 'test attachments',
-      recipients: ['support@example.com'],
-      ccRecipients: ['supportCC@example.com'],
-      bccRecipients: ['supportBCC@example.com'],
-      body: '<p>Dear Sir/Madam,</p>',
+      recipients: [this.props.email],
+      body: '<p>Dear Sir/Madam, Please find attachment for location</p>',
       isHTML: true,
       attachment: {
         path: uri,  // The absolute path of the file from which to read data.
@@ -89,6 +117,7 @@ class Location extends React.Component {
   };
   render() {
     let { location } = this.state;
+    let { isMid } = this.props;
     return (
       <ContainerComponent title="Location">
         <View style={{ padding: 20 }}>
@@ -102,7 +131,7 @@ class Location extends React.Component {
           </TouchableOpacity>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
-              <Title text={moment.utc(this.props.timeLeft * 1000).format('ss')} customStyle={{ color: 'black' }} />
+              <Title text={isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.mid} customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Mid check' customStyle={{ alignSelf: 'flex-start' }} />
@@ -110,7 +139,7 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute} onPress={this.openImagePicker}>
-              <Title text={this.props.final} customStyle={{ color: 'black' }} />
+              <Title text={!isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.final} customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Final check' customStyle={{ alignSelf: 'flex-start' }} />
@@ -132,7 +161,18 @@ class Location extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
-        {/* <PopupComponent /> */}
+        {this.props.isPopupShow && 
+        <PopupComponent closePopup={() => {
+          
+          this.props.eventDetails('isPopupShow',false)
+          this.props.eventDetails('isMid',true)
+          
+        }} takePicOnly={() => {
+          isMid ? this.openMidCheckImage() : this.openImagePicker()
+          this.props.startTimer(false,true);
+        }}
+        />}
+        
       </ContainerComponent>
     );
   }
@@ -143,12 +183,16 @@ const mapStateToProps = state => {
     isTimerOn: state.root.timer.isTimerOn,
     timeLeft: state.root.timer.timeLeft,
     mid: state.root.event.eventDetails.mid,
-    final: state.root.event.eventDetails.final
+    final: state.root.event.eventDetails.final,
+    email: state.root.event.eventDetails.email,
+    isPopupShow: state.root.event.isPopupShow,
+    isMid: state.root.event.isMid,
+    midAttachment: state.root.event.midAttachment
   }
 };
 
 const mapDispatchToProps = {
-  startTimer, timerUpdate, setNewEvent
+  startTimer, timerUpdate, setNewEvent,eventDetails
 };
 
 

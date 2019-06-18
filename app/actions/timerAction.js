@@ -14,10 +14,11 @@ import {
 } from '../utils/commonFunction'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
+import {eventDetails} from '../actions/eventAction';
 
 let Timer = null;
-let TotalTimerTime = 0.5 * 60;
-let TotalTimerTimeNext = 1 * 60;
+let TotalTimerTime =  15;
+let TotalTimerTimeNext = 30;
 let timerCount = 0
 
 
@@ -62,9 +63,10 @@ export const timerStop = () => {
   return (dispatch, getState) => {
     clearInterval(Timer)
     dispatch(timerUpdate("isTimerOn", false))
-    confirmLogout('nxt timer will be for 1 min', () => {
-      dispatch(startTimer(false,true));
-    }, () => {})
+    // confirmLogout('nxt timer will be for 1 min', () => {
+      dispatch(eventDetails('isPopupShow', true))
+      // dispatch(startTimer(false,true));
+    // }, () => {})
     // openImagePicker()
   }
 }

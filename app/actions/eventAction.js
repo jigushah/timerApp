@@ -15,7 +15,7 @@ import {
 
 export const setEventDetails = (values) => {
     return (dispatch, getState) => {
-      dispatch(eventDetails("eventDetails", values))
+      dispatch(updateEventDetail("eventDetails", values))
       
     }
   }
@@ -24,16 +24,21 @@ export const setNewEvent = (values) => {
 return (dispatch, getState) => {
     currentList = _.cloneDeep(getState().root.event.eventList);
     currentList.push(values)
-    dispatch(eventDetails("eventList", currentList))
+    dispatch(updateEventDetail("eventList", currentList))
     
 }
 }
 
-
-export const eventDetails = (key, value) => {
-return {
+export const updateEventDetail = (key, value) => {
+  return {
     type: EVENT_DETAILS,
     key,
     value
 }
+}
+
+export const eventDetails = (key, value) => {
+  return (dispatch, getState) => {
+    dispatch(updateEventDetail(key, value))
+  }
 }

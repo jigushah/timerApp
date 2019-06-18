@@ -10,8 +10,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialUIIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 const TabNavigator = createBottomTabNavigator({
-  Active: EventScreen,
   Location: LocationScreen,
+  Active: EventScreen,
   Setting: SettingScreen,
   About: TimerScreen,
 }, {
