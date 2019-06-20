@@ -7,6 +7,7 @@ const initialState = {
   currentIndex : 0,
   timeLeft:'',
   lastTimeUpdateAt: moment(moment.now()).format("DD/MM/YYYY hh:mm:ss"),
+  timerCount: 0,
   isTimerOn:false,
 };
 

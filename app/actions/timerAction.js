@@ -13,12 +13,12 @@ import {
 } from '../utils/commonFunction'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
-import {eventDetails} from '../actions/eventAction';
+import {eventDetails, updateEventDetail} from '../actions/eventAction';
+import _ from 'lodash';
 
 let Timer = null;
 let TotalTimerTime =  15;
 let TotalTimerTimeNext = 30;
-let timerCount = 0
 
 
 
@@ -26,49 +26,52 @@ export const startTimer = (resume = false,next = false) => (dispatch, getState) 
   return new Promise((resolve, reject) => {
     let {
       lastTimeUpdateAt,
-      timeLeft,
-      isTimerOn
+      timerCount,
     } = getState().root.timer;
     if (Timer != null) {
       clearInterval(Timer)
     }
-    if (resume == true) {
-      let secToSkip = moment.duration(moment().diff(moment(lastTimeUpdateAt, "DD/MM/YYYY hh:mm:ss"))).seconds();
-      if (timeLeft - secToSkip > 0) {
-        timerCount = timeLeft - secToSkip;
-        dispatch(timerUpdate("isTimerOn", true))
-      } else {
-        // return dispatch(timerStop());
-      }
-    } else {
-      dispatch(timerUpdate("isTimerOn", true))
-      timerCount = next ? TotalTimerTimeNext : TotalTimerTime
-    }
+    let secToSkip = moment.duration(moment().diff(moment(lastTimeUpdateAt, "DD/MM/YYYY hh:mm:ss"))).seconds();
+    timerCount = timerCount + secToSkip
     Timer = setInterval(() => {
-      timerCount = timerCount + 1
-      if (timerCount > 0) {
-        dispatch(timerUpdateList({
-          timeLeft: timerCount,
+      var { selectedEvent, eventList } = getState().root.event;
+      timerCount = timerCount + 1;
+      let sec = secToSkip > 0 ? secToSkip : 1
+      secToSkip = 0;
+      if(eventList.length > 0) {
+        let list = updatelistbySeconds(eventList, sec);
+        if(selectedEvent && selectedEvent.eventLocation) {
+          let updatedSelectedEvent = list.filter(event => event.eventLocation === selectedEvent.eventLocation)
+          dispatch(updateEventDetail('selectedEvent',updatedSelectedEvent[0]))
+        }
+        
+        dispatch(updateEventDetail('eventList',list))
+      }
+      dispatch(timerUpdateList({
+          timerCount: timerCount,
           lastTimeUpdateAt: moment(moment.now()).format("DD/MM/YYYY hh:mm:ss")
         }))
-      } else {
-        // dispatch(timerStop())
-      }
     }, 1000)
-
   })
 }
-export const timerStop = () => {
-  return (dispatch, getState) => {
-    clearInterval(Timer)
-    dispatch(timerUpdate("isTimerOn", false))
-    // confirmLogout('nxt timer will be for 1 min', () => {
-      dispatch(eventDetails('isPopupShow', true))
-      // dispatch(startTimer(false,true));
-    // }, () => {})
-    // openImagePicker()
-  }
+
+export const updatelistbySeconds = (eventList, sec) => {
+  let events = _.cloneDeep(eventList).map(event => {
+    if(event.isActive == 1) {
+      event.start = event.start - sec;
+      if(event.start <= 0) { event.start = 0; }
+    } else if (event.isActive == 2 && event.startAttachment) {
+      event.mid = event.mid - sec;
+      if(event.mid <= 0) { event.mid = 0; }
+    } else if (event.isActive == 3 && event.midAttachment) {
+      event.final = event.final - sec;
+      if(event.final <= 0) { event.final = 0; }
+    }
+    return event;
+  });
+  return events
 }
+
 export const timerUpdate = (key, value) => {
   return {
     type: TIMER_UPDATE,

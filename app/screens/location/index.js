@@ -4,7 +4,7 @@ import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
 import { startTimer, timerUpdate } from '../../actions/timerAction'
-import { setNewEvent,eventDetails } from '../../actions/eventAction';
+import { setNewEvent, eventDetails } from '../../actions/eventAction';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
@@ -38,52 +38,51 @@ class Location extends React.Component {
   }
 
   storeNewEvent = () => {
-    this.props.setNewEvent({ 
-      eventLocation: this.state.location, 
+    this.props.setNewEvent({
+      eventLocation: this.state.location,
       start: this.props.start,
-      mid: this.props.mid, 
+      mid: this.props.mid,
       final: this.props.final,
-      startAttachment:'',
-      midAttachment:'',
-      finalAttachment:'', 
-      isActive: 1 
+      startAttachment: false,
+      midAttachment: false,
+      finalAttachment: false,
+      isActive: 1
     })
   }
 
   clearEventLocation = () => {
     this.setState({ location: '' })
   }
- 
-  openMidCheckImage = () => {
-    const options = {
-      title: 'Select IMAGE',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
 
-    ImagePicker.showImagePicker(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
+  updateEventList = (eventUpdate, check) => {
+    let { eventList } = this.props;
+
+    let updatedEventList = eventList.map(event => {
+      if (event.eventLocation === eventUpdate.eventLocation) {
+        if (check === 'Start Check') {
+          event.isActive = 2;
+          event.startAttachment = true;
+          return event;
+        } else if (check === 'Mid Check') {
+          event.isActive = 3;
+          event.midAttachment = true;
+          return event;
+        } else if (check === 'Final Check') {
+          event.isActive = 0;
+          event.finalAttachment = true;
+          return event;
+        }
       } else {
-        const { uri, path, type } = response;
-        // this.sendEmail(path, type);
-        // this.props.startTimer(false,true);
-        this.props.eventDetails('midAttachment', {path : path, type: type})
-        this.props.eventDetails('isMid',false)
-        this.props.eventDetails('isPopupShow',false)
+        return event;
       }
-    });
+    }).filter(e => e.isActive !== 0)
+    this.props.eventDetails('eventList', updatedEventList)
   }
 
-  openImagePicker = () => {
+  openImagePicker = (check, event) => {
+
     const options = {
-      title: 'Select IMAGE',
+      title: `Select IMAGE  for ${check}`,
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -99,19 +98,17 @@ class Location extends React.Component {
         console.log('User tapped custom button: ', response.customButton);
       } else {
         const { uri, path, type } = response;
-        let {midAttachment} = this.props;
-        let pathList = [midAttachment.path , path];
-        let typeList = [midAttachment.type, type];
-        this.sendEmail(path, type);
+        this.sendEmail(path, type, event, check);
+        this.updateEventList(event, check)
       }
     });
 
-  };
-  sendEmail = (uri, type) => {
+  }
+  sendEmail = (uri, type, event, check) => {
     Mailer.mail({
-      subject: 'test attachments',
+      subject: `${event.eventLocation} ${check} Attachment`,
       recipients: [this.props.email],
-      body: '<p>Dear Sir/Madam, Please find attachment for location</p>',
+      body: `<p>Dear Sir/Madam, Please check attachment for ${check} on Location : ${event.eventLocation}</p>`,
       isHTML: true,
       attachment: {
         path: uri,  // The absolute path of the file from which to read data.
@@ -122,26 +119,31 @@ class Location extends React.Component {
       if (error) {
         console.log('Error', 'Could not send mail. Please send a mail to support@example.com');
       }
+
     });
   };
+
   render() {
     let { location } = this.state;
-    let { isMid } = this.props;
+    let { isMid, selectedEvent } = this.props;
+    let hasSelected = selectedEvent ? true : false;
+    
+
     return (
       <ContainerComponent title="Location">
         <View style={{ padding: 20 }}>
           <Title text="Location Details" customStyle={{ padding: 10 }} />
-          <FormFieldInput onChangeTextInput={text => this.setState({ location: text })} value={location} />
+          <FormFieldInput onChangeTextInput={text => this.setState({ location: text })}
+            value={hasSelected ? selectedEvent.eventLocation : location} />
           <TouchableOpacity style={styles.startCircle}
             onPress={() => {
               this.storeNewEvent()
-              this.props.startTimer();
             }}>
             <Title text='Start' customStyle={{ color: 'black' }} />
           </TouchableOpacity>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
-              <Title text={isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.start} 
+              <Title text={hasSelected ? selectedEvent.start : this.props.start}
                 customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
@@ -150,7 +152,7 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
-              <Title text={isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.mid} 
+              <Title text={hasSelected ? selectedEvent.mid : this.props.mid}
                 customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
@@ -159,7 +161,7 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute} onPress={this.openImagePicker}>
-              <Title text={!isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.final} 
+              <Title text={hasSelected ? selectedEvent.final : this.props.final}
                 customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
@@ -167,7 +169,7 @@ class Location extends React.Component {
             </View>
           </View>
           <View style={styles.rowContainer}>
-            <TouchableOpacity onPress={this.clearEventLocation} 
+            <TouchableOpacity onPress={this.clearEventLocation}
               style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, borderRadius: 25 }}>
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
@@ -175,7 +177,11 @@ class Location extends React.Component {
                 color: 'black'
               }} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={()=>{this.setState({location:''})}} 
+            <TouchableOpacity onPress={() => {
+              this.setState({ location: '' }, () => {
+                this.props.eventDetails('selectedEvent', null)
+              })
+            }}
               style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
               <Title text='New' customStyle={{
                 alignSelf: 'center', padding: 10,
@@ -184,16 +190,16 @@ class Location extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
-        {this.props.isPopupShow && 
-        <PopupComponent closePopup={() => {
-          this.props.eventDetails('isPopupShow',false)
-          this.props.eventDetails('isMid',true)
-        }} takePicOnly={() => {
-          isMid ? this.openMidCheckImage() : this.openImagePicker()
-          this.props.startTimer(false,true);
-        }}
-        />}
-        
+        {this.props.isPopupShow &&
+          <PopupComponent closePopup={() => {
+            this.props.eventDetails('isPopupShow', false)
+            this.props.eventDetails('isMid', true)
+          }} takePicOnly={() => {
+            isMid ? this.openMidCheckImage() : this.openImagePicker()
+            this.props.startTimer(false, true);
+          }}
+          />}
+
       </ContainerComponent>
     );
   }
@@ -201,20 +207,19 @@ class Location extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    isTimerOn: state.root.timer.isTimerOn,
-    timeLeft: state.root.timer.timeLeft,
     start: state.root.event.eventDetails.start,
     mid: state.root.event.eventDetails.mid,
     final: state.root.event.eventDetails.final,
     email: state.root.event.eventDetails.email,
     isPopupShow: state.root.event.isPopupShow,
     isMid: state.root.event.isMid,
-    midAttachment: state.root.event.midAttachment
+    midAttachment: state.root.event.midAttachment,
+    selectedEvent: state.root.event.selectedEvent
   }
 };
 
 const mapDispatchToProps = {
-  startTimer, timerUpdate, setNewEvent,eventDetails
+  startTimer, timerUpdate, setNewEvent, eventDetails
 };
 
 

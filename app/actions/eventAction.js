@@ -25,6 +25,7 @@ return (dispatch, getState) => {
     currentList = _.cloneDeep(getState().root.event.eventList);
     currentList.push(values)
     dispatch(updateEventDetail("eventList", currentList))
+    dispatch(updateEventDetail('selectedEvent',values))
     
 }
 }

@@ -4,7 +4,7 @@ import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
 import { startTimer, timerUpdate } from '../../actions/timerAction'
-import { setNewEvent } from '../../actions/eventAction';
+import { setNewEvent, eventDetails } from '../../actions/eventAction';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
@@ -18,7 +18,73 @@ class EventScreen extends React.Component {
     }
   }
 
+  updateEventList = (eventUpdate, check) => {
+    let {eventList} = this.props;
+    
+    let updatedEventList = eventList.map(event => {
+      if(event.eventLocation === eventUpdate.eventLocation){
+      if(check === 'Start Check') {
+        event.isActive = 2;
+        event.startAttachment = true;
+        return event;
+      } else if(check === 'Mid Check') {
+        event.isActive = 3;
+        event.midAttachment = true;
+        return event;
+      } else if(check === 'Final Check') {
+        event.isActive = 0;
+        event.finalAttachment = true;
+        return event;
+      }
+    } else {
+      return event;
+    }}).filter(e => e.isActive !== 0)
+    this.props.eventDetails('eventList', updatedEventList)
+  }
 
+  openImagePicker = (check, event) => {
+    
+    const options = {
+      title: `Confirm area checked ? than Select IMAGE  for ${check}`,
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        const { uri, path, type } = response;
+        this.sendEmail(path, type, event, check);
+        this.updateEventList(event, check)
+      }
+    });
+
+  }
+  sendEmail = (uri, type, event, check) => {
+    Mailer.mail({
+      subject: `${event.eventLocation} ${check} Attachment`,
+      recipients: [this.props.email],
+      body: `<p>Dear Sir/Madam, Please check attachment for ${check} on Location : ${event.eventLocation}</p>`,
+      isHTML: true,
+      attachment: {
+        path: uri,  // The absolute path of the file from which to read data.
+        type: type,   // Mime Type: jpg, png, doc, ppt, html, pdf
+        name: ' Note',   // Optional: Custom filename for attachment
+      }
+    }, (error, event) => {
+      if (error) {
+        console.log('Error', 'Could not send mail. Please send a mail to support@example.com');
+      }
+      
+    });
+  };
   render() {
     let { eventList } = this.props;
     return (
@@ -32,18 +98,34 @@ class EventScreen extends React.Component {
             <Title text={"Final"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
           </View>
           {eventList.map(event => {
-            return (<View style={styles.rowContainer}>
-              {/* <TouchableOpacity style={styles.circleMinute}>
-              <Title text={moment.utc(event.mid * 1000).format('ss')} customStyle={{ color: 'black' }} />
-            </TouchableOpacity> */}
-              <View style={styles.rowContainer}>
-                <Title text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-                <Title text={event.start} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-                <Title text={event.mid} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-                <Title text={event.final} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+            let isActionRequired = (event.isActive === 1 && event.start == 0 && !event.startAttachment) ||
+              (event.isActive === 2 && event.mid == 0 && !event.midAttachment) ||
+              (event.isActive === 3 && event.final == 0 && !event.finalAttachment)
+            return (<TouchableOpacity
+              style={[styles.rowContainer, {
+                backgroundColor: isActionRequired ? 'rgba(0, 255, 0 , 0.2)' : 'red'
+              }]}
+              onPress={() => {
+                if(isActionRequired){
+                  if(event.isActive === 1 && event.start == 0 && !event.startAttachment){
+                    this.openImagePicker('Start Check', event)
+                  } else if(event.isActive === 2 && event.mid == 0 && !event.midAttachment){
+                    this.openImagePicker('Mid Check', event)
+                  } else if(event.isActive === 3 && event.final == 0 && !event.finalAttachment){
+                    this.openImagePicker('Final Check', event)
+                  }
 
-              </View>
-            </View>)
+                } else {
+                this.props.eventDetails('selectedEvent', event)
+                this.props.navigation.navigate('Location')
+                }
+              }}
+              >
+              <Title text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title text={event.start} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title text={event.mid} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title text={event.final} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+            </TouchableOpacity>)
           })
           }
         </View>
@@ -56,12 +138,13 @@ const mapStateToProps = state => {
   return {
     isTimerOn: state.root.timer.isTimerOn,
     timeLeft: state.root.timer.timeLeft,
-    eventList: state.root.event.eventList
+    eventList: state.root.event.eventList,
+    email: state.root.event.eventDetails.email
   }
 };
 
 const mapDispatchToProps = {
-  startTimer, timerUpdate, setNewEvent
+  startTimer, timerUpdate, setNewEvent, eventDetails
 };
 
 

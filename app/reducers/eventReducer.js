@@ -4,11 +4,17 @@ import {EVENT_DETAILS} from '../actions/index';
 import moment from 'moment';
 
 const initialState = {
-  eventDetails:{},
+  eventDetails:{
+    start: 30,
+    mid: 30,
+    final: 30,
+    email:'test@gmail.com'
+  },
   eventList:[],
   isPopupShow: false,
   midAttachment:{},
-  isMid : true
+  isMid : true,
+  selectedEvent: null
 };
 
 export function EventReducer(state = initialState, action) {
