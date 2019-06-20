@@ -1,4 +1,3 @@
-import {} from './index';
 import {
   HttpClient
 } from "../api/httpClient"
@@ -39,21 +38,21 @@ export const startTimer = (resume = false,next = false) => (dispatch, getState) 
         timerCount = timeLeft - secToSkip;
         dispatch(timerUpdate("isTimerOn", true))
       } else {
-        return dispatch(timerStop());
+        // return dispatch(timerStop());
       }
     } else {
       dispatch(timerUpdate("isTimerOn", true))
       timerCount = next ? TotalTimerTimeNext : TotalTimerTime
     }
     Timer = setInterval(() => {
-      timerCount = timerCount - 1
+      timerCount = timerCount + 1
       if (timerCount > 0) {
         dispatch(timerUpdateList({
           timeLeft: timerCount,
           lastTimeUpdateAt: moment(moment.now()).format("DD/MM/YYYY hh:mm:ss")
         }))
       } else {
-        dispatch(timerStop())
+        // dispatch(timerStop())
       }
     }, 1000)
 

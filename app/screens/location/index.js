@@ -38,7 +38,16 @@ class Location extends React.Component {
   }
 
   storeNewEvent = () => {
-    this.props.setNewEvent({ eventLocation: this.state.location, mid: this.props.mid, final: this.props.final,midAttachment:'',finalAttachment:'', isActive: false })
+    this.props.setNewEvent({ 
+      eventLocation: this.state.location, 
+      start: this.props.start,
+      mid: this.props.mid, 
+      final: this.props.final,
+      startAttachment:'',
+      midAttachment:'',
+      finalAttachment:'', 
+      isActive: 1 
+    })
   }
 
   clearEventLocation = () => {
@@ -125,13 +134,24 @@ class Location extends React.Component {
           <FormFieldInput onChangeTextInput={text => this.setState({ location: text })} value={location} />
           <TouchableOpacity style={styles.startCircle}
             onPress={() => {
+              this.storeNewEvent()
               this.props.startTimer();
             }}>
             <Title text='Start' customStyle={{ color: 'black' }} />
           </TouchableOpacity>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
-              <Title text={isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.mid} customStyle={{ color: 'black' }} />
+              <Title text={isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.start} 
+                customStyle={{ color: 'black' }} />
+            </TouchableOpacity>
+            <View style={styles.checkontainer}>
+              <Title text='Start check' customStyle={{ alignSelf: 'flex-start' }} />
+            </View>
+          </View>
+          <View style={styles.rowContainer}>
+            <TouchableOpacity style={styles.circleMinute}>
+              <Title text={isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.mid} 
+                customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Mid check' customStyle={{ alignSelf: 'flex-start' }} />
@@ -139,21 +159,24 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute} onPress={this.openImagePicker}>
-              <Title text={!isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.final} customStyle={{ color: 'black' }} />
+              <Title text={!isMid ? moment.utc(this.props.timeLeft * 1000).format('ss') : this.props.final} 
+                customStyle={{ color: 'black' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Final check' customStyle={{ alignSelf: 'flex-start' }} />
             </View>
           </View>
           <View style={styles.rowContainer}>
-            <TouchableOpacity onPress={this.clearEventLocation} style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, borderRadius: 25 }}>
+            <TouchableOpacity onPress={this.clearEventLocation} 
+              style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, borderRadius: 25 }}>
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
                 padding: 10,
                 color: 'black'
               }} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={this.storeNewEvent} style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
+            <TouchableOpacity onPress={()=>{this.setState({location:''})}} 
+              style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
               <Title text='New' customStyle={{
                 alignSelf: 'center', padding: 10,
                 color: 'black'
@@ -163,10 +186,8 @@ class Location extends React.Component {
         </View>
         {this.props.isPopupShow && 
         <PopupComponent closePopup={() => {
-          
           this.props.eventDetails('isPopupShow',false)
           this.props.eventDetails('isMid',true)
-          
         }} takePicOnly={() => {
           isMid ? this.openMidCheckImage() : this.openImagePicker()
           this.props.startTimer(false,true);
@@ -182,6 +203,7 @@ const mapStateToProps = state => {
   return {
     isTimerOn: state.root.timer.isTimerOn,
     timeLeft: state.root.timer.timeLeft,
+    start: state.root.event.eventDetails.start,
     mid: state.root.event.eventDetails.mid,
     final: state.root.event.eventDetails.final,
     email: state.root.event.eventDetails.email,

@@ -10,6 +10,7 @@ class Setting extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      start:'',
       mid: '',
       final: '',
       email: ''
@@ -17,15 +18,26 @@ class Setting extends React.Component {
   }
 
   saveDetails = () =>{
-    this.props.setEventDetails({"mid":this.state.mid,"final":this.state.final,"email":this.state.email})
+    this.props.setEventDetails({"start":this.state.start,"mid":this.state.mid,"final":this.state.final,"email":this.state.email})
   }
 
 
   render() {
-    let { mid, final,email } = this.state;
+    let { start, mid, final,email } = this.state;
     return (
       <ContainerComponent title="Settings">
         <View style={{ padding: 10 }}>
+        <View style={styles.rowContainer}>
+            <View style={{ flex: 3, justifyContent: 'center' }}>
+              <Title text="Start timer  " />
+            </View>
+            <View style={{ flex: 3 }}>
+              <FormFieldInput keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ start: text })} value={start} />
+            </View>
+            <View style={{ flex: 2, justifyContent: 'center' }}>
+              <Title text='min' />
+            </View>
+          </View>
           <View style={styles.rowContainer}>
             <View style={{ flex: 3, justifyContent: 'center' }}>
               <Title text="Mid timer  " />
