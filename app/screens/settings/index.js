@@ -32,7 +32,7 @@ class Setting extends React.Component {
               <Title text="Start timer  " />
             </View>
             <View style={{ flex: 3 }}>
-              <FormFieldInput keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ start: text })} value={start} />
+              <FormFieldInput placeholder={''} keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ start: text })} value={start} />
             </View>
             <View style={{ flex: 2, justifyContent: 'center' }}>
               <Title text='min' />
@@ -43,7 +43,7 @@ class Setting extends React.Component {
               <Title text="Mid timer  " />
             </View>
             <View style={{ flex: 3 }}>
-              <FormFieldInput keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ mid: text })} value={mid} />
+              <FormFieldInput placeholder={''} keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ mid: text })} value={mid} />
             </View>
             <View style={{ flex: 2, justifyContent: 'center' }}>
               <Title text='min' />
@@ -54,7 +54,7 @@ class Setting extends React.Component {
               <Title text="Final timer" />
             </View>
             <View style={{ flex: 3 }}>
-              <FormFieldInput keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ final: text })} value={final} />
+              <FormFieldInput placeholder={''} keyboardType={'number-pad'} onChangeTextInput={text => this.setState({ final: text })} value={final} />
             </View>
             <View style={{ flex: 2, justifyContent: 'center' }}>
               <Title text='min' />
@@ -62,13 +62,13 @@ class Setting extends React.Component {
           </View>
           <View style={{padding:10}}>
           <Title text="Email Address" customStyle={{ alignSelf: 'flex-start' }} />
-          <FormFieldInput keyboardType={'email-address'} onChangeTextInput={text => this.setState({ email: text })} value={email} />
+          <FormFieldInput placeholder={'Email address'} keyboardType={'email-address'} onChangeTextInput={text => this.setState({ email: text })} value={email} />
           </View>
           <View style={styles.rowContainer}>
-            <TouchableOpacity onPress={this.saveDetails} style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
+            <TouchableOpacity onPress={this.saveDetails} style={{ backgroundColor: '#ED1C24', borderColor: 'black', borderWidth: 1, borderRadius: 10, width: 100 }}>
               <Title text='Save' customStyle={{
                 alignSelf: 'center', padding: 10,
-                color: 'black'
+                color: 'white'
               }} />
             </TouchableOpacity>
           </View>

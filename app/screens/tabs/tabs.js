@@ -20,8 +20,14 @@ const TabNavigator = createBottomTabNavigator({
         const { routeName } = navigation.state;
         let IconComponent = MaterialUIIcons;
         let iconName;
-        if (routeName === 'About' || routeName === 'Location' || routeName === 'Setting' || routeName === 'Active') {
-          iconName = 'dictionary';
+        if (routeName === 'About') {
+            iconName = 'account';
+        } else if (routeName === 'Location') {
+            iconName = 'camera-timer';
+        } else if (routeName === 'Setting') {
+            iconName = 'settings';
+        } else if (routeName === 'Active' ) {
+            iconName = 'alpha-a-circle-outline';
         }
 
         // You can return any component that you like here!
@@ -29,8 +35,8 @@ const TabNavigator = createBottomTabNavigator({
       },
     }),
     tabBarOptions: {
-      activeTintColor: 'red',
-      inactiveTintColor: 'red',
+      activeTintColor: '#ED1C24',
+      inactiveTintColor: '#ED1C24',
       inactiveBackgroundColor: 'white',
       activeBackgroundColor: 'white'
     }

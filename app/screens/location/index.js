@@ -130,21 +130,20 @@ class Location extends React.Component {
     
 
     return (
-      <ContainerComponent title="Location">
+      <ContainerComponent title="Location Details">
         <View style={{ padding: 20 }}>
-          <Title text="Location Details" customStyle={{ padding: 10 }} />
-          <FormFieldInput onChangeTextInput={text => this.setState({ location: text })}
+          <FormFieldInput placeholder={'Location name'} onChangeTextInput={text => this.setState({ location: text })}
             value={hasSelected ? selectedEvent.eventLocation : location} />
           <TouchableOpacity style={styles.startCircle}
             onPress={() => {
               this.storeNewEvent()
             }}>
-            <Title text='Start' customStyle={{ color: 'black' }} />
+            <Title text='Start' customStyle={{ color: 'white' }} />
           </TouchableOpacity>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
               <Title text={hasSelected ? selectedEvent.start : this.props.start}
-                customStyle={{ color: 'black' }} />
+                customStyle={{ color: 'white' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Start check' customStyle={{ alignSelf: 'flex-start' }} />
@@ -153,7 +152,7 @@ class Location extends React.Component {
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
               <Title text={hasSelected ? selectedEvent.mid : this.props.mid}
-                customStyle={{ color: 'black' }} />
+                customStyle={{ color: 'white' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Mid check' customStyle={{ alignSelf: 'flex-start' }} />
@@ -162,7 +161,7 @@ class Location extends React.Component {
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute} onPress={this.openImagePicker}>
               <Title text={hasSelected ? selectedEvent.final : this.props.final}
-                customStyle={{ color: 'black' }} />
+                customStyle={{ color: 'white' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
               <Title text='Final check' customStyle={{ alignSelf: 'flex-start' }} />
@@ -170,11 +169,12 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity onPress={this.clearEventLocation}
-              style={{ backgroundColor: 'white', borderColor: 'black', borderWidth: 2, borderRadius: 25 }}>
+              style={{ backgroundColor: '#ED1C24', borderColor: 'black', borderWidth: 0.3, borderRadius: 15 }}>
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
-                padding: 10,
-                color: 'black'
+                padding: 20,
+                fontSize: 16,
+                color: 'white'
               }} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => {
@@ -182,10 +182,10 @@ class Location extends React.Component {
                 this.props.eventDetails('selectedEvent', null)
               })
             }}
-              style={{ backgroundColor: 'white', borderColor: 'green', borderWidth: 2, borderRadius: 25 }}>
+              style={{ backgroundColor: '#ED1C24', borderColor: 'black', borderWidth: 0.3, borderRadius: 15 }}>
               <Title text='New' customStyle={{
-                alignSelf: 'center', padding: 10,
-                color: 'black'
+                alignSelf: 'center', padding: 20,fontSize: 16,
+                color: 'white'
               }} />
             </TouchableOpacity>
           </View>
@@ -226,16 +226,17 @@ const mapDispatchToProps = {
 const styles = StyleSheet.create({
   rowContainer: { flexDirection: 'row', justifyContent: 'space-around', padding: 10 },
   circleMinute: {
-    height: 70, width: 70, borderRadius: 35, borderColor: 'green', borderWidth: 5,
-    backgroundColor: 'white', alignSelf: 'flex-end',
+    height: 70, width: 100, borderRadius: 10, borderColor: 'black', borderWidth: 1,
+    backgroundColor: '#ED1C24', alignSelf: 'flex-end',color:'white',
     alignItems: 'center', justifyContent: 'center', margin: 20,
   },
   checkontainer: { flex: 4, justifyContent: 'center', alignItems: 'flex-start' },
   startCircle: {
-    height: 100,
-    width: 100, borderRadius: 50, borderWidth: 5, borderColor: 'orange',
-    backgroundColor: 'white', alignSelf: 'center',
-    alignItems: 'center', justifyContent: 'center', margin: 20
+    height: 70,
+    width: 200, borderRadius: 10, borderWidth: 1, borderColor: 'black',
+    backgroundColor: '#ED1C24', alignSelf: 'center',
+    alignItems: 'center', justifyContent: 'center', margin: 20,
+
   }
 });
 
