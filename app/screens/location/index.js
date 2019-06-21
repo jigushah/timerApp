@@ -169,7 +169,7 @@ class Location extends React.Component {
           </View>
           <View style={styles.rowContainer}>
             <TouchableOpacity onPress={this.clearEventLocation}
-              style={{ backgroundColor: '#ED1C24', borderColor: 'black', borderWidth: 0.3, borderRadius: 15 }}>
+              style={{ marginTop: 20 }}>
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
                 padding: 20,
@@ -182,9 +182,9 @@ class Location extends React.Component {
                 this.props.eventDetails('selectedEvent', null)
               })
             }}
-              style={{ backgroundColor: '#ED1C24', borderColor: 'black', borderWidth: 0.3, borderRadius: 15 }}>
-              <Title text='New' customStyle={{
-                alignSelf: 'center', padding: 20,fontSize: 16,
+              >
+              <Title text='+' customStyle={{
+                alignSelf: 'center', padding: 20,fontSize: 50,marginLeft:50,
                 color: 'white'
               }} />
             </TouchableOpacity>
@@ -229,6 +229,11 @@ const styles = StyleSheet.create({
     height: 70, width: 100, borderRadius: 10, borderColor: 'black', borderWidth: 1,
     backgroundColor: '#ED1C24', alignSelf: 'flex-end',color:'white',
     alignItems: 'center', justifyContent: 'center', margin: 20,
+    shadowColor: 'rgb(0,0,0)',
+    shadowOffset: { height: 1, width: 1 },
+    shadowOpacity: 8,
+    shadowRadius: 4,
+    elevation: 20,
   },
   checkontainer: { flex: 4, justifyContent: 'center', alignItems: 'flex-start' },
   startCircle: {
@@ -236,7 +241,11 @@ const styles = StyleSheet.create({
     width: 200, borderRadius: 10, borderWidth: 1, borderColor: 'black',
     backgroundColor: '#ED1C24', alignSelf: 'center',
     alignItems: 'center', justifyContent: 'center', margin: 20,
-
+    shadowColor: 'rgb(0,0,0)',
+    shadowOffset: { height: 1, width: 1 },
+    shadowOpacity: 8,
+    shadowRadius: 4,
+    elevation: 20,
   }
 });
 

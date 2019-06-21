@@ -59,13 +59,20 @@ export const updatelistbySeconds = (eventList, sec) => {
   let events = _.cloneDeep(eventList).map(event => {
     if(event.isActive == 1) {
       event.start = event.start - sec;
-      if(event.start <= 0) { event.start = 0; }
+      if(event.start <= 0) {
+        event.start = 0;
+      }
     } else if (event.isActive == 2 && event.startAttachment) {
       event.mid = event.mid - sec;
-      if(event.mid <= 0) { event.mid = 0; }
+      if(event.mid <= 0) {
+        event.mid = 0;
+        // showAlert("Mid check complete");
+      }
     } else if (event.isActive == 3 && event.midAttachment) {
       event.final = event.final - sec;
-      if(event.final <= 0) { event.final = 0; }
+      if(event.final <= 0) { event.final = 0;
+        //showAlert("Final check complete");
+      }
     }
     return event;
   });
