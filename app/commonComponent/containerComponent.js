@@ -8,7 +8,7 @@ class CardComponent extends React.Component {
       <View style={{ flex: 1, backgroundColor:'#ED1C24' }}>
         <Header title={title} />
         <View style={{height:1,backgroundColor:'white'}}/>
-          <ScrollView style={{ padding: 0, backgroundColor: '#ED1C24' }}>
+          <ScrollView style={{ padding: 0, backgroundColor: '#ED1C24' ,flex:1}}>
             {children}
           </ScrollView>
       </View>

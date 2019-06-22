@@ -3,6 +3,7 @@ package com.timerapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.zmxv.RNSound.RNSoundPackage;
 import com.imagepicker.ImagePickerPackage;
 import com.chirag.RNMail.*;
 import com.swmansion.gesturehandler.react.RNGestureHandlerPackage;
@@ -27,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNSoundPackage(),
             new RNMail(),
             new ImagePickerPackage(),
             new RNGestureHandlerPackage(),

@@ -9,12 +9,16 @@ import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
+import PopupComponent from '../../commonComponent/popupComponent';
+import {Dimensions } from "react-native"; 
 
 class EventScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      location: ''
+      location: '',
+      isPopupShow: false,
+      selectedEventIndex: ''
     }
   }
 
@@ -23,12 +27,8 @@ class EventScreen extends React.Component {
     
     let updatedEventList = eventList.map(event => {
       if(event.eventLocation === eventUpdate.eventLocation){
-      if(check === 'Start Check') {
+      if(check === 'Mid Check') {
         event.isActive = 2;
-        event.startAttachment = true;
-        return event;
-      } else if(check === 'Mid Check') {
-        event.isActive = 3;
         event.midAttachment = true;
         return event;
       } else if(check === 'Final Check') {
@@ -63,6 +63,10 @@ class EventScreen extends React.Component {
         const { uri, path, type } = response;
         this.sendEmail(path, type, event, check);
         this.updateEventList(event, check)
+        this.setState({
+          selectedEventIndex:'',
+          isPopupShow:false
+        })
       }
     });
 
@@ -87,34 +91,29 @@ class EventScreen extends React.Component {
   };
   render() {
     let { eventList } = this.props;
+    let eventPopup = this.state.selectedEventIndex !== "" ? eventList[this.state.selectedEventIndex] : {};
     return (
       <ContainerComponent title="Active locations">
-        <View style={{ padding: 20 }}>
+        <View style={{ padding: 20 , flex:1, height: Dimensions.get('window').height}}>
           {/* <Title text="Event List" customStyle={{ padding: 10 }} /> */}
           <View style={styles.rowContainer}>
             <Title text={"Location"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-            <Title text={"Start"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
             <Title text={"Mid"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
             <Title text={"Final"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
           </View>
-          {eventList.map(event => {
-            let isActionRequired = (event.isActive === 1 && event.start == 0 && !event.startAttachment) ||
-              (event.isActive === 2 && event.mid == 0 && !event.midAttachment) ||
-              (event.isActive === 3 && event.final == 0 && !event.finalAttachment)
+          {eventList.map((event, index) => {
+            let isActionRequired = (event.isActive === 1 && event.mid == 0 && !event.midAttachment) ||
+              (event.isActive === 2 && event.final == 0 && !event.finalAttachment)
             return (<TouchableOpacity
               style={[styles.rowContainer, {
                 backgroundColor: isActionRequired ? 'rgba(0, 255, 0 , 0.2)' : 'red'
               }]}
               onPress={() => {
                 if(isActionRequired){
-                  if(event.isActive === 1 && event.start == 0 && !event.startAttachment){
-                    this.openImagePicker('Start Check', event)
-                  } else if(event.isActive === 2 && event.mid == 0 && !event.midAttachment){
-                    this.openImagePicker('Mid Check', event)
-                  } else if(event.isActive === 3 && event.final == 0 && !event.finalAttachment){
-                    this.openImagePicker('Final Check', event)
-                  }
-
+                  this.setState({
+                    isPopupShow: true,
+                    selectedEventIndex: index
+                  })
                 } else {
                 this.props.eventDetails('selectedEvent', event)
                 this.props.navigation.navigate('Location')
@@ -122,13 +121,25 @@ class EventScreen extends React.Component {
               }}
               >
               <Title text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-              <Title text={event.start} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-              <Title text={event.mid} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-              <Title text={event.final} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title text={moment.utc(event.mid*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title text={moment.utc(event.final*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
             </TouchableOpacity>)
           })
           }
+          {this.state.isPopupShow &&
+          <PopupComponent event={eventPopup} closePopup={() => {
+            this.setState({isPopupShow : false})
+          }} takePicOnly={() => {
+              let event = eventList[this.state.selectedEventIndex];
+              if(event.isActive === 1 && event.mid == 0 && !event.midAttachment){
+                this.openImagePicker('Mid Check', event)
+              } else if(event.isActive === 2 && event.final == 0 && !event.finalAttachment){
+                this.openImagePicker('Final Check', event)
+              }
+          }}
+          />}
         </View>
+        
       </ContainerComponent>
     );
   }

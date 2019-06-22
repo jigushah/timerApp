@@ -9,7 +9,6 @@ import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
-import PopupComponent from '../../commonComponent/popupComponent';
 
 class Location extends React.Component {
   constructor(props) {
@@ -40,10 +39,10 @@ class Location extends React.Component {
   storeNewEvent = () => {
     this.props.setNewEvent({
       eventLocation: this.state.location,
-      start: this.props.start,
       mid: this.props.mid,
       final: this.props.final,
-      startAttachment: false,
+      isMidAlarmDone : false,
+      isFinalAlarmDone : false, 
       midAttachment: false,
       finalAttachment: false,
       isActive: 1
@@ -59,12 +58,8 @@ class Location extends React.Component {
 
     let updatedEventList = eventList.map(event => {
       if (event.eventLocation === eventUpdate.eventLocation) {
-        if (check === 'Start Check') {
+        if (check === 'Mid Check') {
           event.isActive = 2;
-          event.startAttachment = true;
-          return event;
-        } else if (check === 'Mid Check') {
-          event.isActive = 3;
           event.midAttachment = true;
           return event;
         } else if (check === 'Final Check') {
@@ -123,9 +118,26 @@ class Location extends React.Component {
     });
   };
 
+  sendStartEmail = () => {
+    let today = new Date();
+    let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate()
+      +'  '+today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    Mailer.mail({
+      subject: `${this.state.location} work started`,
+      recipients: [this.props.email],
+      body: `<p>Dear Sir/Madam, Work is started  on Location : ${this.state.location} at ${date}</p>`,
+      isHTML: true,
+    }, (error, event) => {
+      if (error) {
+        console.log('Error', 'Could not send mail. Please send a mail to support@example.com');
+      }
+
+    });
+  };
+
   render() {
     let { location } = this.state;
-    let { isMid, selectedEvent } = this.props;
+    let { isMid, selectedEvent,timerCount } = this.props;
     let hasSelected = selectedEvent ? true : false;
     
 
@@ -136,22 +148,14 @@ class Location extends React.Component {
             value={hasSelected ? selectedEvent.eventLocation : location} />
           <TouchableOpacity style={styles.startCircle}
             onPress={() => {
-              this.storeNewEvent()
+              this.storeNewEvent();
+              this.sendStartEmail(selectedEvent)
             }}>
             <Title text='Start' customStyle={{ color: 'white' }} />
           </TouchableOpacity>
           <View style={styles.rowContainer}>
             <TouchableOpacity style={styles.circleMinute}>
-              <Title text={hasSelected ? selectedEvent.start : this.props.start}
-                customStyle={{ color: 'white' }} />
-            </TouchableOpacity>
-            <View style={styles.checkontainer}>
-              <Title text='Start check' customStyle={{ alignSelf: 'flex-start' }} />
-            </View>
-          </View>
-          <View style={styles.rowContainer}>
-            <TouchableOpacity style={styles.circleMinute}>
-              <Title text={hasSelected ? selectedEvent.mid : this.props.mid}
+              <Title text={hasSelected ? moment.utc(selectedEvent.mid*1000).format('mm:ss') : moment.utc(this.props.mid*1000).format('mm:ss')}
                 customStyle={{ color: 'white' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
@@ -159,8 +163,8 @@ class Location extends React.Component {
             </View>
           </View>
           <View style={styles.rowContainer}>
-            <TouchableOpacity style={styles.circleMinute} onPress={this.openImagePicker}>
-              <Title text={hasSelected ? selectedEvent.final : this.props.final}
+            <TouchableOpacity style={styles.circleMinute}>
+              <Title text={hasSelected ? moment.utc(selectedEvent.final*1000).format('mm:ss') : moment.utc(this.props.final*1000).format('mm:ss')}
                 customStyle={{ color: 'white' }} />
             </TouchableOpacity>
             <View style={styles.checkontainer}>
@@ -190,15 +194,6 @@ class Location extends React.Component {
             </TouchableOpacity>
           </View>
         </View>
-        {this.props.isPopupShow &&
-          <PopupComponent closePopup={() => {
-            this.props.eventDetails('isPopupShow', false)
-            this.props.eventDetails('isMid', true)
-          }} takePicOnly={() => {
-            isMid ? this.openMidCheckImage() : this.openImagePicker()
-            this.props.startTimer(false, true);
-          }}
-          />}
 
       </ContainerComponent>
     );
@@ -207,14 +202,14 @@ class Location extends React.Component {
 
 const mapStateToProps = state => {
   return {
-    start: state.root.event.eventDetails.start,
     mid: state.root.event.eventDetails.mid,
     final: state.root.event.eventDetails.final,
     email: state.root.event.eventDetails.email,
     isPopupShow: state.root.event.isPopupShow,
     isMid: state.root.event.isMid,
     midAttachment: state.root.event.midAttachment,
-    selectedEvent: state.root.event.selectedEvent
+    selectedEvent: state.root.event.selectedEvent,
+    timerCount : state.root.timer.timerCount
   }
 };
 

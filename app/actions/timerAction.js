@@ -14,6 +14,8 @@ import {
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
 import {eventDetails, updateEventDetail} from '../actions/eventAction';
+var Sound = require('react-native-sound');
+Sound.setCategory('Playback');
 import _ from 'lodash';
 
 let Timer = null;
@@ -57,21 +59,50 @@ export const startTimer = (resume = false,next = false) => (dispatch, getState) 
 
 export const updatelistbySeconds = (eventList, sec) => {
   let events = _.cloneDeep(eventList).map(event => {
-    if(event.isActive == 1) {
-      event.start = event.start - sec;
-      if(event.start <= 0) {
-        event.start = 0;
-      }
-    } else if (event.isActive == 2 && event.startAttachment) {
+    if (event.isActive == 1) {
       event.mid = event.mid - sec;
       if(event.mid <= 0) {
         event.mid = 0;
-        // showAlert("Mid check complete");
+        if(!event.isMidAlarmDone){
+          showAlert(`${event.eventLocation} Mid check complete`);
+          event.isMidAlarmDone = true;
+          var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+              return;
+            }
+            whoosh.play((success) => {
+              if (success) {
+                console.log('successfully finished playing');
+              } else {
+                console.log('playback failed due to audio decoding errors');
+              }
+            });
+          });
+        }
       }
-    } else if (event.isActive == 3 && event.midAttachment) {
+    } else if (event.isActive == 2 && event.midAttachment) {
       event.final = event.final - sec;
       if(event.final <= 0) { event.final = 0;
-        //showAlert("Final check complete");
+        if(!event.isFinalAlarmDone){
+          showAlert(`${event.eventLocation} final check complete`);
+          event.isFinalAlarmDone = true;
+          var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
+            if (error) {
+              return;
+            }
+            // loaded successfully
+            console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+          
+            // Play the sound with an onEnd callback
+            whoosh.play((success) => {
+              if (success) {
+                console.log('successfully finished playing');
+              } else {
+                console.log('playback failed due to audio decoding errors');
+              }
+            });
+          });
+        }
       }
     }
     return event;
