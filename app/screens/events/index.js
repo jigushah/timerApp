@@ -110,10 +110,11 @@ class EventScreen extends React.Component {
               }]}
               onPress={() => {
                 if(isActionRequired){
-                  this.setState({
-                    isPopupShow: true,
-                    selectedEventIndex: index
-                  })
+                  if(event.isActive === 1 && event.mid == 0 && !event.midAttachment){
+                    this.openImagePicker('Mid Check', event)
+                  } else if(event.isActive === 2 && event.final == 0 && !event.finalAttachment){
+                    this.openImagePicker('Final Check', event)
+                  }
                 } else {
                 this.props.eventDetails('selectedEvent', event)
                 this.props.navigation.navigate('Location')
