@@ -3,9 +3,9 @@ import { Text } from 'react-native';
 
 class TitleComponent extends React.Component {
   render() {
-    let { text, customStyle } = this.props;
+    let { text, customStyle, numberOfLines,ellipsizeMode } = this.props;
     return (
-      <Text style={[{fontSize:24,fontWeight:'600', alignSelf:'center', color:'white'},customStyle]}>{text}</Text>
+      <Text style={[{fontSize:24,fontWeight:'600', alignSelf:'center', color:'white'},customStyle]} numberOfLines={numberOfLines} ellipsizeMode={ellipsizeMode}>{text}</Text>
     );
   }
 }

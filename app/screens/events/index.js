@@ -45,7 +45,8 @@ class EventScreen extends React.Component {
   openImagePicker = (check, event) => {
     
     const options = {
-      title: `Confirm area checked ? than Select IMAGE  for ${check}`,
+      // title: `Confirm area checked ? than Select IMAGE  for ${check}`,
+      title:'',
       storageOptions: {
         skipBackup: true,
         path: 'images',
@@ -121,7 +122,9 @@ class EventScreen extends React.Component {
                 }
               }}
               >
-              <Title text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <View style={{maxWidth:135}}>
+                <Title text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} numberOfLines={2} ellipsizeMode={'tail'} />
+              </View>
               <Title text={moment.utc(event.mid*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
               <Title text={moment.utc(event.final*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
             </TouchableOpacity>)
