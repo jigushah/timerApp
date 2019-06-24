@@ -5,7 +5,6 @@
 	};
 	objectVersion = 46;
 	objects = {
-
 /* Begin PBXBuildFile section */
 		0006F84D06154C928C28783C /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 139BC559CAB94BF9B92080EA /* FontAwesome5_Regular.ttf */; };
 		007E282A935D413F979226FD /* libRNVectorIcons-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DED17A60B4564672A2A986AA /* libRNVectorIcons-tvOS.a */; };

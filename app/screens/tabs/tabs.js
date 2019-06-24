@@ -27,7 +27,7 @@ const TabNavigator = createBottomTabNavigator({
         } else if (routeName === 'Setting') {
             iconName = 'settings';
         } else if (routeName === 'Active' ) {
-            iconName = 'alpha-a-circle-outline';
+            iconName = 'timer';
         }
 
         // You can return any component that you like here!

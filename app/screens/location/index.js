@@ -99,6 +99,7 @@ class Location extends React.Component {
     });
 
   }
+
   sendEmail = (uri, type, event, check) => {
     Mailer.mail({
       subject: `${event.eventLocation} ${check} Attachment`,
