@@ -10,10 +10,9 @@ class Setting extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            start: '',
-            mid: '30',
-            final: '30',
-            email: ''
+            mid: "30",
+            final: "30",
+            email: props.email
         }
     }
 
@@ -46,7 +45,7 @@ class Setting extends React.Component {
                         </View>
                         <View style={{flex: 3}}>
                             <FormFieldInput placeholder={''} keyboardType={'number-pad'}
-                                            onChangeTextInput={text => this.setState({mid: text})} value={mid}/>
+                                            onChangeTextInput={text => this.setState({mid: text})} value={(mid).toString()}/>
                         </View>
                         <View style={{flex: 2, justifyContent: 'center'}}>
                             <Title text='min'/>
@@ -58,7 +57,7 @@ class Setting extends React.Component {
                         </View>
                         <View style={{flex: 3}}>
                             <FormFieldInput placeholder={''} keyboardType={'number-pad'}
-                                            onChangeTextInput={text => this.setState({final: text})} value={final}/>
+                                            onChangeTextInput={text => this.setState({final: text})} value={(final).toString()}/>
                         </View>
                         <View style={{flex: 2, justifyContent: 'center'}}>
                             <Title text='min'/>
@@ -106,7 +105,11 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => {
-    return {}
+    return {
+        mid: state.root.event.eventDetails.mid,
+    final: state.root.event.eventDetails.final,
+    email: state.root.event.eventDetails.email,
+    }
 };
 
 const mapDispatchToProps = {

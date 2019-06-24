@@ -138,7 +138,7 @@ class Location extends React.Component {
 
   render() {
     let { location } = this.state;
-    let { isMid, selectedEvent,timerCount } = this.props;
+    let { isMid, selectedEvent,timerCount, email } = this.props;
     let hasSelected = selectedEvent ? true : false;
 
 
@@ -149,8 +149,15 @@ class Location extends React.Component {
             value={hasSelected ? selectedEvent.eventLocation : location} />
           <TouchableOpacity style={styles.startCircle}
             onPress={() => {
-              this.storeNewEvent();
+              if(email == ''){
+                alert('Please fill email address in settings.')
+
+              } else if(location == '') {
+                alert('Please fill location.')
+              } else {
+                this.storeNewEvent();
               this.sendStartEmail(selectedEvent)
+              }
             }}>
             <Title text='Start' customStyle={{ color: 'white' }} />
           </TouchableOpacity>

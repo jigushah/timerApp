@@ -5,10 +5,9 @@ import moment from 'moment';
 
 const initialState = {
   eventDetails:{
-    start: 30,
-    mid: 30,
-    final: 30,
-    email:'test@gmail.com'
+    mid: 30*60,
+    final: 30*60,
+    email:''
   },
   eventList:[],
   isPopupShow: false,
