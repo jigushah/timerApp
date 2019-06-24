@@ -100,7 +100,6 @@ class Location extends React.Component {
     });
 
   }
-
   sendEmail = (uri, type, event, check) => {
     Mailer.mail({
       subject: `${event.eventLocation} ${check} Attachment`,
@@ -141,7 +140,7 @@ class Location extends React.Component {
     let { location } = this.state;
     let { isMid, selectedEvent,timerCount } = this.props;
     let hasSelected = selectedEvent ? true : false;
-    
+
 
     return (
       <ContainerComponent title="Location Details">
