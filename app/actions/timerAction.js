@@ -1,150 +1,210 @@
 import {
-  HttpClient
+    HttpClient
 } from "../api/httpClient"
 import urlMapper from "../api/urlMapper"
 import {
-  TIMER_UPDATE,
-  TIMER_UPDATE_LIST
+    TIMER_UPDATE,
+    TIMER_UPDATE_LIST
 } from './index'
 import moment from 'moment'
 import {
-  showAlert,
-  confirmLogout
+    showAlert,
+    confirmLogout
 } from '../utils/commonFunction'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
 import {eventDetails, updateEventDetail} from '../actions/eventAction';
+
 var Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 import _ from 'lodash';
 
 let Timer = null;
-let TotalTimerTime =  15;
+let TotalTimerTime = 15;
 let TotalTimerTimeNext = 30;
+let PushNotification = require('react-native-push-notification');
 
-
-
-export const startTimer = (resume = false,next = false) => (dispatch, getState) => {
-  return new Promise((resolve, reject) => {
-    let {
-      lastTimeUpdateAt,
-      timerCount,
-    } = getState().root.timer;
-    if (Timer != null) {
-      clearInterval(Timer)
-    }
-    let secToSkip = moment.duration(moment().diff(moment(lastTimeUpdateAt, "DD/MM/YYYY hh:mm:ss"))).seconds();
-    timerCount = timerCount + secToSkip
-    Timer = setInterval(() => {
-      var { selectedEvent, eventList } = getState().root.event;
-      timerCount = timerCount + 1;
-      let sec = secToSkip > 0 ? secToSkip : 1
-      secToSkip = 0;
-      if(eventList.length > 0) {
-        let list = updatelistbySeconds(eventList, sec);
-        if(selectedEvent && selectedEvent.eventLocation) {
-          let updatedSelectedEvent = list.filter(event => event.eventLocation === selectedEvent.eventLocation)
-          dispatch(updateEventDetail('selectedEvent',updatedSelectedEvent[0]))
+export const startTimer = (resume = false, next = false) => (dispatch, getState) => {
+    return new Promise((resolve, reject) => {
+        let {
+            lastTimeUpdateAt,
+            timerCount,
+        } = getState().root.timer;
+        if (Timer != null) {
+            clearInterval(Timer)
         }
-        
-        dispatch(updateEventDetail('eventList',list))
-      }
-      dispatch(timerUpdateList({
-          timerCount: timerCount,
-          lastTimeUpdateAt: moment(moment.now()).format("DD/MM/YYYY hh:mm:ss")
-        }))
-    }, 1000)
-  })
+        let secToSkip = moment.duration(moment().diff(moment(lastTimeUpdateAt, "DD/MM/YYYY hh:mm:ss"))).seconds();
+        timerCount = timerCount + secToSkip
+        Timer = setInterval(() => {
+            var {selectedEvent, eventList} = getState().root.event;
+            timerCount = timerCount + 1;
+            let sec = secToSkip > 0 ? secToSkip : 1
+            secToSkip = 0;
+            if (eventList.length > 0) {
+                let list = updatelistbySeconds(eventList, sec);
+                if (selectedEvent && selectedEvent.eventLocation) {
+                    let updatedSelectedEvent = list.filter(event => event.eventLocation === selectedEvent.eventLocation)
+                    dispatch(updateEventDetail('selectedEvent', updatedSelectedEvent[0]))
+                }
+
+                dispatch(updateEventDetail('eventList', list))
+            }
+            dispatch(timerUpdateList({
+                timerCount: timerCount,
+                lastTimeUpdateAt: moment(moment.now()).format("DD/MM/YYYY hh:mm:ss")
+            }))
+        }, 1000)
+    })
 }
 
 export const updatelistbySeconds = (eventList, sec) => {
-  let events = _.cloneDeep(eventList).map(event => {
-    if (event.isActive == 1) {
-      event.mid = event.mid - sec;
-      if(event.mid <= 0) {
-        event.mid = 0;
-        if(!event.isMidAlarmDone){
-          showAlert(`${event.eventLocation} Mid check complete`);
-          event.isMidAlarmDone = true;
-          var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
-            if (error) {
-              return;
+    let events = _.cloneDeep(eventList).map(event => {
+        if (event.isActive == 1) {
+            event.mid = event.mid - sec;
+            if (event.mid <= 0) {
+                event.mid = 0;
+                if (!event.isMidAlarmDone) {
+                    showAlert(`${event.eventLocation} Mid check complete`);
+                    event.isMidAlarmDone = true;
+                    var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
+                        if (error) {
+                            return;
+                        }
+                        whoosh.play((success) => {
+                            if (success) {
+                                console.log('successfully finished playing');
+                            } else {
+                                console.log('playback failed due to audio decoding errors');
+                            }
+                        });
+                    });
+                    PushNotification.localNotification({
+                        /* Android Only Properties */
+                        id: '0', // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
+                        ticker: "My Notification Ticker", // (optional)
+                        autoCancel: true, // (optional) default: true
+                        largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+                        smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+                        bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
+                        subText: "This is a subText", // (optional) default: none
+                        color: "red", // (optional) default: system default
+                        vibrate: true, // (optional) default: true
+                        vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+                        tag: 'some_tag', // (optional) add tag to message
+                        group: "group", // (optional) add group to message
+                        ongoing: false, // (optional) set whether this is an "ongoing" notification
+                        priority: "high", // (optional) set notification priority, default: high
+                        visibility: "private", // (optional) set notification visibility, default: private
+                        importance: "high", // (optional) set notification importance, default: high
+
+                        /* iOS and Android properties */
+                        title:  "Final check complete", // (optional)
+                        message: `${event.eventLocation}`, // (required)
+                        playSound: true, // (optional) default: true
+                        soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+                        number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+                        repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+                        actions: '["No"]',  // (Android only) See the doc for notification actions to know more
+                    });
+                }
             }
-            whoosh.play((success) => {
-              if (success) {
-                console.log('successfully finished playing');
-              } else {
-                console.log('playback failed due to audio decoding errors');
-              }
-            });
-          });
-        }
-      }
-    } else if (event.isActive == 2 && event.midAttachment) {
-      event.final = event.final - sec;
-      if(event.final <= 0) { event.final = 0;
-        if(!event.isFinalAlarmDone){
-          showAlert(`${event.eventLocation} final check complete`);
-          event.isFinalAlarmDone = true;
-          var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
-            if (error) {
-              return;
+        } else if (event.isActive == 2 && event.midAttachment) {
+            event.final = event.final - sec;
+            if (event.final <= 0) {
+                event.final = 0;
+                if (!event.isFinalAlarmDone) {
+                    showAlert(`${event.eventLocation} final check complete`);
+                    event.isFinalAlarmDone = true;
+                    var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
+                        if (error) {
+                            return;
+                        }
+                        // loaded successfully
+                        console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
+
+                        // Play the sound with an onEnd callback
+                        whoosh.play((success) => {
+                            if (success) {
+                                console.log('successfully finished playing');
+                            } else {
+                                console.log('playback failed due to audio decoding errors');
+                            }
+                        });
+
+
+                    });
+
+                    PushNotification.localNotification({
+                        /* Android Only Properties */
+                        id: '0', // (optional) Valid unique 32 bit integer specified as string. default: Autogenerated Unique ID
+                        ticker: "My Notification Ticker", // (optional)
+                        autoCancel: true, // (optional) default: true
+                        largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+                        smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+                        bigText: "My big text that will be shown when notification is expanded", // (optional) default: "message" prop
+                        subText: "This is a subText", // (optional) default: none
+                        color: "red", // (optional) default: system default
+                        vibrate: true, // (optional) default: true
+                        vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+                        tag: 'some_tag', // (optional) add tag to message
+                        group: "group", // (optional) add group to message
+                        ongoing: false, // (optional) set whether this is an "ongoing" notification
+                        priority: "high", // (optional) set notification priority, default: high
+                        visibility: "private", // (optional) set notification visibility, default: private
+                        importance: "high", // (optional) set notification importance, default: high
+
+                        /* iOS and Android properties */
+                        title:  "Final check complete", // (optional)
+                        message: `${event.eventLocation}`, // (required)
+                        playSound: true, // (optional) default: true
+                        soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+                        number: '10', // (optional) Valid 32 bit integer specified as string. default: none (Cannot be zero)
+                        repeatType: 'day', // (optional) Repeating interval. Check 'Repeating Notifications' section for more info.
+                        actions: '["No"]',  // (Android only) See the doc for notification actions to know more
+                    });
+                }
             }
-            // loaded successfully
-            console.log('duration in seconds: ' + whoosh.getDuration() + 'number of channels: ' + whoosh.getNumberOfChannels());
-          
-            // Play the sound with an onEnd callback
-            whoosh.play((success) => {
-              if (success) {
-                console.log('successfully finished playing');
-              } else {
-                console.log('playback failed due to audio decoding errors');
-              }
-            });
-          });
         }
-      }
-    }
-    return event;
-  });
-  return events
+        return event;
+    });
+    return events
 }
 
 export const timerUpdate = (key, value) => {
-  return {
-    type: TIMER_UPDATE,
-    key,
-    value
-  }
+    return {
+        type: TIMER_UPDATE,
+        key,
+        value
+    }
 }
 
 export const timerUpdateList = (list) => {
-  return {
-    type: TIMER_UPDATE_LIST,
-    list
-  }
+    return {
+        type: TIMER_UPDATE_LIST,
+        list
+    }
 }
 
 export const openImagePicker = () => {
-  const options = {
-    title: 'Select IMAGE',
-    storageOptions: {
-      skipBackup: true,
-      path: 'images',
-    },
-  };
+    const options = {
+        title: 'Select IMAGE',
+        storageOptions: {
+            skipBackup: true,
+            path: 'images',
+        },
+    };
 
-  ImagePicker.showImagePicker(options, (response) => {
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.error) {
-      console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
-      console.log('User tapped custom button: ', response.customButton);
-    } else {
-      const { uri, path, type } = response;
-      this.sendEmail(path, type);
-    }
-  });
+    ImagePicker.showImagePicker(options, (response) => {
+        if (response.didCancel) {
+            console.log('User cancelled image picker');
+        } else if (response.error) {
+            console.log('ImagePicker Error: ', response.error);
+        } else if (response.customButton) {
+            console.log('User tapped custom button: ', response.customButton);
+        } else {
+            const {uri, path, type} = response;
+            this.sendEmail(path, type);
+        }
+    });
 
 }

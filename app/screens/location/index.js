@@ -149,10 +149,10 @@ class Location extends React.Component {
             value={hasSelected ? selectedEvent.eventLocation : location} />
           <TouchableOpacity style={styles.startCircle}
             onPress={() => {
-              if(email == ''){
+              if(email === ''){
                 alert('Please fill email address in settings.')
 
-              } else if(location == '') {
+              } else if(location === '') {
                 alert('Please fill location.')
               } else {
                 this.storeNewEvent();
