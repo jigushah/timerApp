@@ -30,6 +30,16 @@ return (dispatch, getState) => {
 }
 }
 
+export const deleteSelectedEvent = () => {
+  return (dispatch, getState) => {
+    let eventList = getState().root.event.eventList;
+    let selectedEvent = getState().root.event.selectedEvent;
+    let updatedEventList = eventList.filter(e => e.eventLocation !== selectedEvent.eventLocation)
+    dispatch(updateEventDetail("eventList", updatedEventList))
+    dispatch(updateEventDetail('selectedEvent',null))
+  }
+}
+
 export const updateEventDetail = (key, value) => {
   return {
     type: EVENT_DETAILS,

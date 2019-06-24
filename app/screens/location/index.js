@@ -4,7 +4,7 @@ import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
 import { startTimer, timerUpdate } from '../../actions/timerAction'
-import { setNewEvent, eventDetails } from '../../actions/eventAction';
+import { setNewEvent, eventDetails, deleteSelectedEvent } from '../../actions/eventAction';
 import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
@@ -51,6 +51,7 @@ class Location extends React.Component {
 
   clearEventLocation = () => {
     this.setState({ location: '' })
+    this.props.deleteSelectedEvent()
   }
 
   updateEventList = (eventUpdate, check) => {
@@ -215,7 +216,7 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = {
-  startTimer, timerUpdate, setNewEvent, eventDetails
+  startTimer, timerUpdate, setNewEvent, eventDetails, deleteSelectedEvent
 };
 
 
