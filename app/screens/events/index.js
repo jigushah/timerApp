@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, AppState } from 'react-native
 import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
+import Title2 from '../../commonComponent/titleComponent2'
 import { startTimer, timerUpdate } from '../../actions/timerAction'
 import { setNewEvent, eventDetails } from '../../actions/eventAction';
 import { connect } from 'react-redux';
@@ -123,10 +124,10 @@ class EventScreen extends React.Component {
               }}
               >
               <View style={{maxWidth:135}}>
-                <Title text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} numberOfLines={2} ellipsizeMode={'tail'} />
+                <Title2 text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} numberOfLines={2} ellipsizeMode={'tail'} />
               </View>
-              <Title text={moment.utc(event.mid*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-              <Title text={moment.utc(event.final*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title2 text={moment.utc(event.mid*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+              <Title2 text={moment.utc(event.final*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
             </TouchableOpacity>)
           })
           }

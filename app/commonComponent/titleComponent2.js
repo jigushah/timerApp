@@ -1,0 +1,13 @@
+import React from 'react';
+import { Text } from 'react-native';
+
+class TitleComponent2 extends React.Component {
+    render() {
+        let { text, customStyle, numberOfLines,ellipsizeMode } = this.props;
+        return (
+            <Text style={[{fontSize:18,fontWeight:'600', alignSelf:'center', color:'white'},customStyle]} numberOfLines={numberOfLines} ellipsizeMode={ellipsizeMode}>{text}</Text>
+        );
+    }
+}
+
+export default TitleComponent2

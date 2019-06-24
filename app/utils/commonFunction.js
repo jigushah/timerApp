@@ -16,20 +16,20 @@ export const isDateInFuture = (date) => {
 }
 
 export const showAlert = (text) => {
-  Alert.alert('Stripe App',text,[
+  Alert.alert('Alert',text,[
     {text: 'OK', onPress: () => console.log('OK Pressed')},
   ])
 }
 
 export const confirmLogout = (text,okPress,cancelPress) => {
-  Alert.alert('Stripe App',text,[
+  Alert.alert('Alert',text,[
     {text: 'OK', onPress: () => okPress()},
     {text: 'Cancel', onPress: () => cancelPress()},
   ])
 }
 
 export const confirmWarningLogout = (text,okPress,cancelPress) => {
-  Alert.alert('Stripe App',text,[
+  Alert.alert('Alert',text,[
     {text: 'Yes. I will logout', onPress: () => okPress()},
     {text: 'No. I will continue shopping', onPress: () => cancelPress()},
   ])
