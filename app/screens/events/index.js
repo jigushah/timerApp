@@ -47,7 +47,7 @@ class EventScreen extends React.Component {
           title: "Final check", // (optional)
           message: `Final check is completed for ${event.eventLocation}`, // (required)
           playSound: true, // (optional) default: true
-          soundName: 'sound', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+          soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
           date: new Date(Date.now() + (event.final * 1000))  // (Android only) See the doc for notification actions to know more
       });
         return event;

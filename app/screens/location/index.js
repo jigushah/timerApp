@@ -171,7 +171,7 @@ class Location extends React.Component {
                   title: "Mid check", // (optional)
                   message: `Mid check is completed for ${location}`, // (required)
                   playSound: true, // (optional) default: true
-                  soundName: 'sound', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+                  soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
                   date: new Date(Date.now() + (this.props.mid * 1000))  // (Android only) See the doc for notification actions to know more
               });
                 this.storeNewEvent();
