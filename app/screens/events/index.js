@@ -12,6 +12,7 @@ import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
 import PopupComponent from '../../commonComponent/popupComponent';
 import {Dimensions } from "react-native"; 
+let PushNotification = require('react-native-push-notification');
 
 class EventScreen extends React.Component {
   constructor(props) {
@@ -31,6 +32,24 @@ class EventScreen extends React.Component {
       if(check === 'Mid Check') {
         event.isActive = 2;
         event.midAttachment = true;
+        PushNotification.localNotificationSchedule({
+          largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+          smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+          bigText: `${event.eventLocation} final check is completed.`, // (optional) default: "message" prop
+          subText: `${event.eventLocation} final check is completed.`, // (optional) default: none
+          color: "red", // (optional) default: system default
+          vibrate: true, // (optional) default: true
+          vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+          tag: 'check', // (optional) add tag to message
+          priority: "high", // (optional) set notification priority, default: high
+          visibility: "private", // (optional) set notification visibility, default: private
+          importance: "high", // (optional) set notification importance, default: high
+          title: "Final check", // (optional)
+          message: `Final check is completed for ${event.eventLocation}`, // (required)
+          playSound: true, // (optional) default: true
+          soundName: 'sound', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+          date: new Date(Date.now() + (event.final * 1000))  // (Android only) See the doc for notification actions to know more
+      });
         return event;
       } else if(check === 'Final Check') {
         event.isActive = 0;

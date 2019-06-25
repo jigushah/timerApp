@@ -9,6 +9,7 @@ import { connect } from 'react-redux';
 import moment from 'moment'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
+let PushNotification = require('react-native-push-notification');
 
 class Location extends React.Component {
   constructor(props) {
@@ -155,6 +156,24 @@ class Location extends React.Component {
               } else if(location === '') {
                 alert('Please fill location.')
               } else {
+                PushNotification.localNotificationSchedule({
+                  largeIcon: "ic_launcher", // (optional) default: "ic_launcher"
+                  smallIcon: "ic_notification", // (optional) default: "ic_notification" with fallback for "ic_launcher"
+                  bigText: `${location} mid check is completed.`, // (optional) default: "message" prop
+                  subText: `${location} mid check is completed.`, // (optional) default: none
+                  color: "red", // (optional) default: system default
+                  vibrate: true, // (optional) default: true
+                  vibration: 300, // vibration length in milliseconds, ignored if vibrate=false, default: 1000
+                  tag: 'check', // (optional) add tag to message
+                  priority: "high", // (optional) set notification priority, default: high
+                  visibility: "private", // (optional) set notification visibility, default: private
+                  importance: "high", // (optional) set notification importance, default: high
+                  title: "Mid check", // (optional)
+                  message: `Mid check is completed for ${location}`, // (required)
+                  playSound: true, // (optional) default: true
+                  soundName: 'sound', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
+                  date: new Date(Date.now() + (this.props.mid * 1000))  // (Android only) See the doc for notification actions to know more
+              });
                 this.storeNewEvent();
               this.sendStartEmail(selectedEvent)
               }
