@@ -35,12 +35,12 @@ android_library(
 
 android_build_config(
     name = "build_config",
-    package = "com.timerapp",
+    package = "com.firecheck",
 )
 
 android_resource(
     name = "res",
-    package = "com.timerapp",
+    package = "com.firecheck",
     res = "src/main/res",
 )
 

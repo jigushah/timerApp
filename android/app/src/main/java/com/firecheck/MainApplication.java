@@ -1,4 +1,4 @@
-package com.timerapp;
+package com.firecheck;
 
 import android.app.Application;
 

@@ -1,4 +1,4 @@
-package com.timerapp;
+package com.firecheck;
 
 import com.facebook.react.ReactActivity;
 

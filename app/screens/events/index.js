@@ -96,7 +96,7 @@ class EventScreen extends React.Component {
     Mailer.mail({
       subject: `${event.eventLocation} ${check} Attachment`,
       recipients: [this.props.email],
-      body: `<p>Dear Sir/Madam, Please check attachment for ${check} on Location : ${event.eventLocation}</p>`,
+      body: `<p>Dear Sir/Madam, Please check attachment for ${check} on Location : ${event.eventLocation}</p><p>***Note: If you can't see attached image, then please attach it manually.</p>`,
       isHTML: true,
       attachment: {
         path: uri,  // The absolute path of the file from which to read data.
