@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, AppState } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, AppState, PushNotificationIOS } from 'react-native'
 import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
@@ -10,6 +10,8 @@ import moment from 'moment'
 import Mailer from 'react-native-mail';
 import ImagePicker from 'react-native-image-picker';
 let PushNotification = require('react-native-push-notification');
+
+
 
 class Location extends React.Component {
   constructor(props) {
@@ -23,6 +25,27 @@ class Location extends React.Component {
   componentDidMount() {
     this.props.startTimer(true)
     AppState.addEventListener('change', (nextAppState) => this._handleAppStateChange(nextAppState));
+    PushNotification.configure({
+ 
+  
+      onRegister: function(token) {
+          console.log( 'TOKEN:', token );
+      },
+    
+      // (required) Called when a remote or local notification is opened or received
+      onNotification: (notification) => {
+          
+          // process the notification
+          let { eventList } = this.props;
+          let event = eventList.filter(e => e.eventLocation === notification.title)
+          if(event.length>0){
+            this.props.eventDetails('selectedEvent', event[0])
+
+          }
+          // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+          notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -168,7 +191,7 @@ class Location extends React.Component {
                   priority: "high", // (optional) set notification priority, default: high
                   visibility: "private", // (optional) set notification visibility, default: private
                   importance: "high", // (optional) set notification importance, default: high
-                  title: "Mid check", // (optional)
+                  title: `${this.state.location}`, // (optional)
                   message: `Mid check is completed for ${location}`, // (required)
                   playSound: true, // (optional) default: true
                   soundName: 'default', // (optional) Sound to play when the notification is shown. Value of 'default' plays the default sound. It can be set to a custom sound such as 'android.resource://com.xyz/raw/my_sound'. It will look for the 'my_sound' audio file in 'res/raw' directory and play it. default: 'default' (default sound is played)
@@ -236,6 +259,7 @@ const mapStateToProps = state => {
     isMid: state.root.event.isMid,
     midAttachment: state.root.event.midAttachment,
     selectedEvent: state.root.event.selectedEvent,
+    eventList: state.root.event.eventList,
     timerCount : state.root.timer.timerCount
   }
 };
