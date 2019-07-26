@@ -18,11 +18,14 @@ import {eventDetails, updateEventDetail} from '../actions/eventAction';
 var Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 import _ from 'lodash';
+import {Alert} from "react-native";
 
 let Timer = null;
 let TotalTimerTime = 15;
 let TotalTimerTimeNext = 30;
 let PushNotification = require('react-native-push-notification');
+import { NavigationActions } from 'react-navigation';
+import NavigatorService from '../screens/navigator';
 
 export const startTimer = (resume = false, next = false) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
@@ -64,7 +67,13 @@ export const updatelistbySeconds = (eventList, sec) => {
             if (event.mid <= 0) {
                 event.mid = 0;
                 if (!event.isMidAlarmDone) {
-                    showAlert(`${event.eventLocation} Mid check complete`);
+
+                    //this.props.navigation.navigate('Active');
+
+                    Alert.alert('Alert',`${event.eventLocation} Mid check complete`,[
+                        {text: 'OK', onPress: () => NavigatorService.navigate('Active')},
+                    ]);
+                    //showAlert(`${event.eventLocation} Mid check complete`);
                     event.isMidAlarmDone = true;
                     var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
                         if (error) {
@@ -78,7 +87,7 @@ export const updatelistbySeconds = (eventList, sec) => {
                             }
                         });
                     });
-                    
+
                 }
             }
         } else if (event.isActive == 2 && event.midAttachment) {
@@ -86,7 +95,8 @@ export const updatelistbySeconds = (eventList, sec) => {
             if (event.final <= 0) {
                 event.final = 0;
                 if (!event.isFinalAlarmDone) {
-                    showAlert(`${event.eventLocation} final check complete`);
+
+                    //showAlert(`${event.eventLocation} final check complete`);
                     event.isFinalAlarmDone = true;
                     var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
                         if (error) {
@@ -104,6 +114,10 @@ export const updatelistbySeconds = (eventList, sec) => {
                             }
                         });
                     });
+
+                    Alert.alert('Alert',`${event.eventLocation} final check complete`,[
+                        {text: 'OK', onPress: () => NavigatorService.navigate('Active')},
+                    ]);
                 }
             }
         }

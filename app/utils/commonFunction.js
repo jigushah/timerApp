@@ -17,7 +17,7 @@ export const isDateInFuture = (date) => {
 
 export const showAlert = (text) => {
   Alert.alert('Alert',text,[
-    {text: 'OK', onPress: () => console.log('OK Pressed')},
+    {text: 'OK', onPress: () => this.props.navigation.navigate('Active')},
   ])
 }
 

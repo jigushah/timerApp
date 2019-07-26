@@ -25,27 +25,6 @@ class Location extends React.Component {
   componentDidMount() {
     this.props.startTimer(true)
     AppState.addEventListener('change', (nextAppState) => this._handleAppStateChange(nextAppState));
-    PushNotification.configure({
- 
-  
-      onRegister: function(token) {
-          console.log( 'TOKEN:', token );
-      },
-    
-      // (required) Called when a remote or local notification is opened or received
-      onNotification: (notification) => {
-          
-          // process the notification
-          let { eventList } = this.props;
-          let event = eventList.filter(e => e.eventLocation === notification.title)
-          if(event.length>0){
-            this.props.eventDetails('selectedEvent', event[0])
-
-          }
-          // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
-          notification.finish(PushNotificationIOS.FetchResult.NoData);
-      },
-    });
   }
 
   componentWillUnmount() {
@@ -227,10 +206,16 @@ class Location extends React.Component {
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
                 padding: 20,
-                fontSize: 16,
+                fontSize: 12,
                 color: 'white'
               }} />
             </TouchableOpacity>
+
+
+
+
+
+
             <TouchableOpacity onPress={() => {
               this.setState({ location: '' }, () => {
                 this.props.eventDetails('selectedEvent', null)
