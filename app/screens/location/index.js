@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, AppState, PushNotificationIOS } from 'react-native'
+import { View, Text, TouchableOpacity, StyleSheet, AppState, PushNotificationIOS, ToastAndroid } from 'react-native'
 import ContainerComponent from '../../commonComponent/containerComponent'
 import { FormFieldInput } from '../../commonComponent/formFieldTitle'
 import Title from '../../commonComponent/titleComponent'
@@ -23,8 +23,29 @@ class Location extends React.Component {
   }
 
   componentDidMount() {
-    this.props.startTimer(true)
+    this.props.startTimer(true, this.props.navigation)
     AppState.addEventListener('change', (nextAppState) => this._handleAppStateChange(nextAppState));
+    PushNotification.configure({
+ 
+  
+      onRegister: function(token) {
+          console.log( 'TOKEN:', token );
+      },
+    
+      // (required) Called when a remote or local notification is opened or received
+      onNotification: (notification) => {
+          
+          // process the notification
+          let { eventList } = this.props;
+          let event = eventList.filter(e => e.eventLocation === notification.title)
+          if(event.length>0){
+            this.props.eventDetails('selectedEvent', event[0])
+
+          }
+          // required on iOS only (see fetchCompletionHandler docs: https://facebook.github.io/react-native/docs/pushnotificationios.html)
+          notification.finish(PushNotificationIOS.FetchResult.NoData);
+      },
+    });
   }
 
   componentWillUnmount() {
@@ -34,7 +55,7 @@ class Location extends React.Component {
   _handleAppStateChange = (nextAppState) => {
     if (this.state.appState.match(/inactive|background/) &&
       nextAppState === 'active') {
-      this.props.startTimer(true)
+      this.props.startTimer(true, this.props.navigation)
     }
     this.setState({ appState: nextAppState });
   }
@@ -50,11 +71,14 @@ class Location extends React.Component {
       finalAttachment: false,
       isActive: 1
     })
+    ToastAndroid.showWithGravity(`Timer for location ${this.state.location} is created`,ToastAndroid.SHORT,ToastAndroid.BOTTOM)
   }
 
   clearEventLocation = () => {
     this.setState({ location: '' })
+    let selectedT= this.props.selectedEvent;
     this.props.deleteSelectedEvent()
+    ToastAndroid.showWithGravity(`Timer for ${selectedT.eventLocation} is cleared`,ToastAndroid.SHORT,ToastAndroid.BOTTOM)
   }
 
   updateEventList = (eventUpdate, check) => {
@@ -137,6 +161,9 @@ class Location extends React.Component {
       }
 
     });
+    this.setState({ location: '' }, () => {
+      this.props.eventDetails('selectedEvent', null)
+    })
   };
 
   render() {
@@ -206,16 +233,10 @@ class Location extends React.Component {
               <Title text='Cancel' customStyle={{
                 alignSelf: 'center',
                 padding: 20,
-                fontSize: 12,
+                fontSize: 16,
                 color: 'white'
               }} />
             </TouchableOpacity>
-
-
-
-
-
-
             <TouchableOpacity onPress={() => {
               this.setState({ location: '' }, () => {
                 this.props.eventDetails('selectedEvent', null)

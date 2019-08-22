@@ -18,16 +18,13 @@ import {eventDetails, updateEventDetail} from '../actions/eventAction';
 var Sound = require('react-native-sound');
 Sound.setCategory('Playback');
 import _ from 'lodash';
-import {Alert} from "react-native";
 
 let Timer = null;
 let TotalTimerTime = 15;
 let TotalTimerTimeNext = 30;
 let PushNotification = require('react-native-push-notification');
-import { NavigationActions } from 'react-navigation';
-import NavigatorService from '../screens/navigator';
 
-export const startTimer = (resume = false, next = false) => (dispatch, getState) => {
+export const startTimer = (resume = false, navigation) => (dispatch, getState) => {
     return new Promise((resolve, reject) => {
         let {
             lastTimeUpdateAt,
@@ -44,7 +41,7 @@ export const startTimer = (resume = false, next = false) => (dispatch, getState)
             let sec = secToSkip > 0 ? secToSkip : 1
             secToSkip = 0;
             if (eventList.length > 0) {
-                let list = updatelistbySeconds(eventList, sec);
+                let list = updatelistbySeconds(eventList, sec, navigation);
                 if (selectedEvent && selectedEvent.eventLocation) {
                     let updatedSelectedEvent = list.filter(event => event.eventLocation === selectedEvent.eventLocation)
                     dispatch(updateEventDetail('selectedEvent', updatedSelectedEvent[0]))
@@ -60,20 +57,17 @@ export const startTimer = (resume = false, next = false) => (dispatch, getState)
     })
 }
 
-export const updatelistbySeconds = (eventList, sec) => {
+export const updatelistbySeconds = (eventList, sec, navigation) => {
     let events = _.cloneDeep(eventList).map(event => {
         if (event.isActive == 1) {
             event.mid = event.mid - sec;
             if (event.mid <= 0) {
                 event.mid = 0;
                 if (!event.isMidAlarmDone) {
-
-                    //this.props.navigation.navigate('Active');
-
-                    Alert.alert('Alert',`${event.eventLocation} Mid check complete`,[
-                        {text: 'OK', onPress: () => NavigatorService.navigate('Active')},
-                    ]);
-                    //showAlert(`${event.eventLocation} Mid check complete`);
+                    showAlert(`${event.eventLocation} Mid check complete`);
+                    if(navigation) {
+                        navigation.navigate('Active');
+                    }
                     event.isMidAlarmDone = true;
                     var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
                         if (error) {
@@ -87,7 +81,7 @@ export const updatelistbySeconds = (eventList, sec) => {
                             }
                         });
                     });
-
+                    
                 }
             }
         } else if (event.isActive == 2 && event.midAttachment) {
@@ -95,8 +89,10 @@ export const updatelistbySeconds = (eventList, sec) => {
             if (event.final <= 0) {
                 event.final = 0;
                 if (!event.isFinalAlarmDone) {
-
-                    //showAlert(`${event.eventLocation} final check complete`);
+                    showAlert(`${event.eventLocation} final check complete`);
+                    if(navigation) {
+                        navigation.navigate('Active');
+                    }
                     event.isFinalAlarmDone = true;
                     var whoosh = new Sound('sound.mpeg', Sound.MAIN_BUNDLE, (error) => {
                         if (error) {
@@ -114,10 +110,6 @@ export const updatelistbySeconds = (eventList, sec) => {
                             }
                         });
                     });
-
-                    Alert.alert('Alert',`${event.eventLocation} final check complete`,[
-                        {text: 'OK', onPress: () => NavigatorService.navigate('Active')},
-                    ]);
                 }
             }
         }

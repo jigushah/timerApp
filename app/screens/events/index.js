@@ -118,7 +118,9 @@ class EventScreen extends React.Component {
         <View style={{ padding: 20 , flex:1, height: Dimensions.get('window').height}}>
           {/* <Title text="Event List" customStyle={{ padding: 10 }} /> */}
           <View style={styles.rowContainer}>
+          <View style={{width:135}}>
             <Title text={"Location"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
+            </View>
             <Title text={"Mid"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
             <Title text={"Final"} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
           </View>
@@ -142,12 +144,14 @@ class EventScreen extends React.Component {
                 }
               }}
               >
-              <View style={{maxWidth:135}}>
-                <Title2 text={event.eventLocation} customStyle={{ alignSelf: 'flex-start', padding: 10 }} numberOfLines={2} ellipsizeMode={'tail'} />
+              <View style={{width:135}}>
+                <Text numberOfLines={2} ellipsizeMode={'tail'} style={{alignSelf: 'flex-start', padding: 10, fontSize:14, color:'white'}}>{event.eventLocation}</Text>
               </View>
-              <Title2 text={moment.utc(event.mid*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-              <Title2 text={moment.utc(event.final*1000).format('mm:ss')} customStyle={{ alignSelf: 'flex-start', padding: 10 }} />
-            </TouchableOpacity>)
+              <Text numberOfLines={2} ellipsizeMode={'tail'} style={{alignSelf: 'flex-start', padding: 10, fontSize:14, color:'white'}}>
+              {moment.utc(event.mid*1000).format('mm:ss')}</Text>
+              <Text numberOfLines={2} ellipsizeMode={'tail'} style={{alignSelf: 'flex-start', padding: 10, fontSize:14, color:'white'}}>
+              {moment.utc(event.final*1000).format('mm:ss')}</Text>
+              </TouchableOpacity>)
           })
           }
           {this.state.isPopupShow &&
